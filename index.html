@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xây Tường Thành - Offline</title>
+    <style>
+        :root {
+            --primary: #FF8C00;
+            --primary-dark: #E67E00;
+            --brick-light: #FFB042;
+            --brick-main: #FF8C00;
+            --brick-border: #CC7000;
+            --brick-shadow: #995400;
+            --bg: #f1f5f9;
+            --wall-bg: #e2e8f0;
+            --brick-text: #1a1a1a;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        header {
+            height: 50px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Wall Area */
+        .wall-area {
+            flex: 3;
+            background-color: var(--wall-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            position: relative;
+            border-right: 3px solid #cbd5e1;
+            box-shadow: inset -5px 0 15px rgba(0,0,0,0.02);
+        }
+
+        .pyramid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .brick-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Brick Styles (Beautiful 3D design) */
+        .brick {
+            width: 155px;  /* Tăng chiều rộng để chứa công thức to hơn */
+            height: 100px;  /* Tăng chiều cao để công thức thoải mái */
+            background: linear-gradient(135deg, var(--brick-light) 0%, var(--brick-main) 100%);
+            border: 2px solid var(--brick-border);
+            border-radius: 8px;
+            box-shadow: 0px 6px 0px var(--brick-shadow), 0px 8px 10px rgba(0,0,0,0.15);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+            padding-top: 24px; /* Đẩy nội dung xuống sâu hơn để tránh vòng tròn */
+            box-sizing: border-box;
+            color: var(--brick-text);
+        }
+
+        .brick.empty {
+            background: rgba(255,255,255,0.4);
+            border: 2px dashed #94a3b8;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            color: #64748b;
+            font-size: 13px;
+            font-weight: bold;
+            padding-top: 0; 
+            border-radius: 8px;
+        }
+
+        .brick.empty.drag-over {
+            background: rgba(255, 140, 0, 0.15);
+            border-color: var(--primary);
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+        }
+
+        .brick.top-brick {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border: 2px solid #cbd5e1;
+            box-shadow: 0px 6px 0px #94a3b8, 0px 8px 10px rgba(0,0,0,0.1);
+            padding-top: 0; 
+        }
+
+        .draggable-wall-brick {
+            cursor: grab;
+        }
+        
+        .draggable-wall-brick:active {
+            cursor: grabbing;
+        }
+        
+        .draggable-wall-brick:hover, .inv-brick:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0px 10px 0px var(--brick-shadow), 0px 15px 20px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .inv-brick:hover {
+            transform: translateY(-4px) scale(1.05); 
+        }
+
+        .circle-label {
+            position: absolute;
+            top: -15px; 
+            left: -10px;
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 3px solid var(--brick-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 15px;
+            color: var(--brick-shadow);
+            z-index: 20;
+            box-shadow: 0px 4px 0px var(--brick-shadow), 0px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .math-content {
+            text-align: center;
+            font-size: 16px; /* Tăng cỡ chữ công thức toán học */
+            font-weight: 800;
+            padding: 0 5px;
+            pointer-events: none;
+            line-height: 1.25;
+            width: 100%;
+            word-wrap: break-word;
+        }
+
+        /* Inventory Area */
+        .inventory-area {
+            flex: 2;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .inv-header {
+            padding: 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: bold;
+            font-size: 14px;
+            color: #475569;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            z-index: 5;
+        }
+
+        .inv-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #fafafa;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .pile {
+            display: flex;
+            flex-wrap: wrap;       
+            justify-content: center;
+            gap: 20px;             
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+
+        .inv-brick {
+            width: 165px; /* Điều chỉnh viên gạch trong kho tương ứng */
+            height: 100px;
+            cursor: grab;
+        }
+
+        /* UI */
+        .stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .score {
+            font-weight: bold;
+            color: var(--primary-dark);
+            background: #fffbeb;
+            padding: 4px 12px;
+            border-radius: 15px;
+            border: 2px solid #fde68a;
+        }
+
+        .timer-box {
+            font-weight: bold;
+            color: #0284c7;
+            background: #f0f9ff;
+            padding: 4px 12px;
+            border-radius: 15px;
+            border: 2px solid #bae6fd;
+        }
+
+        sub { font-size: 0.75em; vertical-align: sub; }
+        sup { font-size: 0.75em; vertical-align: super; }
+
+        /* General Modal/Overlay */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            border-bottom: 6px solid var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .hidden { display: none !important; }
+
+        /* --- CUSTOM ALERT & CONFIRM DIALOGS --- */
+        .dialog-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .dialog-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .dialog-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 340px;
+            width: 90%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-top: 6px solid var(--primary);
+        }
+        .dialog-overlay.active .dialog-box {
+            transform: scale(1);
+        }
+        .dialog-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+        .dialog-message {
+            font-size: 15px;
+            color: #334155;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        .dialog-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .btn-dialog {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            font-size: 14px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-dialog:active {
+            transform: scale(0.95);
+        }
+        .btn-confirm-action { background: var(--primary); color: white; }
+        .btn-confirm-action:hover { background: var(--primary-dark); }
+        .btn-cancel-action { background: #e2e8f0; color: #475569; }
+        .btn-cancel-action:hover { background: #cbd5e1; }
+
+        /* Leaderboard Styles */
+        .leaderboard-box {
+            text-align: left;
+            max-height: 180px;
+            overflow-y: auto;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+        }
+        .lb-table {
+            width: 100%;
+            font-size: 14px;
+            border-collapse: collapse;
+        }
+        .lb-table td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+        .input-group button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .input-group button:hover {
+            background: var(--primary-dark);
+        }
+
+        .submit-btn-top {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #047857;
+            transition: all 0.1s;
+        }
+        
+        .submit-btn-top:hover {
+            background: #059669;
+        }
+        
+        .submit-btn-top:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px #047857;
+        }
+
+        .btn-leaderboard {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #b45309;
+            transition: all 0.1s;
+        }
+
+        .btn-leaderboard:hover {
+            background: #d97706;
+        }
+        
+        .btn-leaderboard:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px #b45309;
+        }
+
+        @media (max-width: 768px) {
+            .header-title { display: none; } 
+            .stats { gap: 8px; font-size: 12px; }
+            .btn-leaderboard, .submit-btn-top { padding: 6px 10px; font-size: 12px; }
+        }
+
+        @media (max-width: 600px) {
+            .main-container { flex-direction: column; }
+            .brick { width: 115px; height: 80px; padding-top: 18px; border-width: 1px; box-shadow: 0px 4px 0px var(--brick-shadow); }
+            .circle-label { width: 28px; height: 28px; font-size: 12px; top: -12px; left: -8px; border-width: 2px; box-shadow: 0px 2px 0px var(--brick-shadow); }
+            .math-content { font-size: 13px; }
+            .inv-brick { width: 120px; height: 85px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title" style="font-weight: 900; font-size: 20px; color: var(--primary); text-shadow: 1px 1px 0px rgba(0,0,0,0.1);">XÂY TƯỜNG THÀNH</div>
+        <div class="stats">
+            <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+            <div class="score">ĐIỂM: <span id="score">0</span></div>
+            <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 Top 10</button>
+            <button class="submit-btn-top" onclick="submitGame(false)">Nộp bài</button>
+            <button onclick="replayGame()" style="cursor:pointer; background:none; border:none; color:#64748b; font-weight:bold;">Tải lại</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Vùng Tường -->
+        <div class="wall-area">
+            <div class="wall-label" style="position: absolute; top: 15px; left: 15px; color: #94a3b8; font-weight: bold; font-size: 12px;">THÁP TOÁN HỌC</div>
+            <div class="pyramid-container" id="pyramid"></div>
+        </div>
+
+        <!-- Vùng Kho Gạch -->
+        <div class="inventory-area" ondragover="event.preventDefault()" ondrop="handleInventoryDrop(event)">
+            <div class="inv-header">KHO GẠCH (Kéo thả tự do)</div>
+            <div class="inv-scroll">
+                <div class="pile" id="inventory"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Màn hình Bắt Đầu -->
+    <div id="start-screen" class="overlay">
+        <div class="modal">
+            <h3 style="margin-top: 0; font-size: 22px; color: #1e293b;">HƯỚNG DẪN</h3>
+            <p style="font-size: 15px; color: #475569; line-height: 1.5;">Kéo gạch vào ô trống sao cho số trên gạch là <b>nghiệm</b> của phương trình ở hàng trên.</p>
+            <div style="background: #f0f9ff; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #bae6fd;">
+                <p style="font-size: 13px; color: #0284c7; margin: 0;">Mẹo: Có thể đổi vị trí gạch trên tường hoặc kéo thả về kho gạch.</p>
+            </div>
+            <div style="background: #fef2f2; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #fecaca;">
+                <p style="font-size: 13px; color: #dc2626; margin: 0; font-weight: bold;">Lưu ý: Phải xây từ trên xuống dưới! Kéo sai trừ 5 điểm.</p>
+            </div>
+            <button onclick="startGame()" style="background:var(--primary); color:white; border:none; padding:15px 30px; font-weight:bold; cursor:pointer; border-radius:10px; width:100%; font-size: 16px; box-shadow: 0 5px 0 var(--brick-shadow); transition: all 0.1s;" onactive="this.style.transform='translateY(5px)'; this.style.boxShadow='0 0 0 var(--brick-shadow)';">BẮT ĐẦU NGAY</button>
+        </div>
+    </div>
+
+    <!-- Màn hình Kết Thúc / Nộp Bài -->
+    <div id="win-screen" class="overlay hidden">
+        <div class="modal">
+            <h2 id="win-title" style="color: #10b981; margin: 0 0 10px 0; font-size: 28px;">XUẤT SẮC!</h2>
+            <p style="margin: 0 0 5px 0; font-size: 16px; color: #475569;">Bạn đạt được: <b id="final-score" style="color: var(--primary); font-size: 24px;">0</b> điểm</p>
+            <p style="margin: 0 0 20px 0; font-size: 16px; color: #475569;">Thời gian làm bài: <b id="final-time" style="color: #0284c7; font-size: 20px;">00:00</b></p>
+            
+            <div id="save-area" class="input-group">
+                <input type="text" id="player-name" placeholder="Nhập tên của bạn">
+                <button id="submit-btn" onclick="saveScore()">Lưu Online</button>
+            </div>
+
+            <div class="leaderboard-box">
+                <div style="font-weight: bold; margin-bottom: 8px; color: #64748b;">Bảng Xếp Hạng</div>
+                <table class="lb-table" id="lb-table"></table>
+            </div>
+
+            <button onclick="replayGame()" style="background:#1e293b; color:white; border:none; padding:12px 25px; cursor:pointer; border-radius:8px; width: 100%; font-size: 15px; font-weight: bold; transition: background 0.2s;">CHƠI LẠI TỪ ĐẦU</button>
+        </div>
+    </div>
+
+    <!-- Màn hình Bảng Xếp Hạng Độc Lập -->
+    <div id="leaderboard-screen" class="overlay hidden">
+        <div class="modal">
+            <h2 style="color: #d97706; margin: 0 0 15px 0; font-size: 24px;">🏆 TOP 10 CAO THỦ</h2>
+            <div class="leaderboard-box" style="max-height: 300px;">
+                <table class="lb-table" id="main-lb-table"></table>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button onclick="clearLeaderboard()" style="background:#ef4444; color:white; border:none; padding:12px; cursor:pointer; border-radius:8px; font-weight: bold; flex: 1; font-size: 13px; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">XÓA DỮ LIỆU</button>
+                <button onclick="closeLeaderboard()" style="background:#1e293b; color:white; border:none; padding:12px; cursor:pointer; border-radius:8px; font-weight: bold; flex: 2; font-size: 15px;">ĐÓNG</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hộp thoại Alert Tuỳ Chỉnh -->
+    <div id="custom-alert" class="dialog-overlay">
+        <div class="dialog-box">
+            <div class="dialog-icon" id="alert-icon">⚠️</div>
+            <div class="dialog-message" id="alert-message">Nội dung thông báo</div>
+            <div class="dialog-buttons">
+                <button class="btn-dialog btn-confirm-action" onclick="closeAlert()">Đã hiểu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hộp thoại Confirm Tuỳ Chỉnh -->
+    <div id="custom-confirm" class="dialog-overlay">
+        <div class="dialog-box" style="border-top-color: #3b82f6;">
+            <div class="dialog-icon">❓</div>
+            <div class="dialog-message" id="confirm-message">Nội dung xác nhận</div>
+            <div class="dialog-buttons">
+                <button class="btn-dialog btn-cancel-action" onclick="closeConfirm(false)">Hủy</button>
+                <button class="btn-dialog btn-confirm-action" style="background:#3b82f6;" onclick="closeConfirm(true)">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIC HỘP THOẠI TÙY CHỈNH ---
+        let pendingConfirmCallback = null;
+
+        function customAlert(message, type = 'warning') {
+            const icons = { warning: '⚠️', error: '❌', success: '✅', info: 'ℹ️' };
+            const colors = { warning: '#f59e0b', error: '#ef4444', success: '#10b981', info: '#3b82f6' };
+            
+            document.getElementById('alert-icon').innerText = icons[type] || '⚠️';
+            document.getElementById('custom-alert').querySelector('.dialog-box').style.borderTopColor = colors[type] || '#f59e0b';
+            document.getElementById('alert-message').innerHTML = message;
+            document.getElementById('custom-alert').classList.add('active');
+        }
+
+        function closeAlert() {
+            document.getElementById('custom-alert').classList.remove('active');
+        }
+
+        function customConfirm(message, callback) {
+            document.getElementById('confirm-message').innerHTML = message;
+            document.getElementById('custom-confirm').classList.add('active');
+            pendingConfirmCallback = callback;
+        }
+
+        function closeConfirm(isConfirmed) {
+            document.getElementById('custom-confirm').classList.remove('active');
+            if (isConfirmed && typeof pendingConfirmCallback === 'function') {
+                pendingConfirmCallback();
+            }
+            pendingConfirmCallback = null;
+        }
+
+        // --- GAME LOGIC ---
+        const DATA = [
+            { id: 0, circle: null, math: 'log<sub>9</sub>[(2x-1)<sup>2</sup>] = 2' },
+            { id: 1, circle: "5", math: 'log<sub>3</sub>(x<sup>2</sup>+x+3) = 1' },
+            { id: 2, circle: "-4", math: '2<sup>x<sup>2</sup>-6x-5/2</sup> = 16&radic;2' },
+            { id: 3, circle: "0", math: '0,5<sup>2x<sup>2</sup>+x-1</sup> = 1/4' },
+            { id: 4, circle: "-1", math: 'log<sub>3</sub>(x<sup>2</sup>+2x) = 1' },
+            { id: 5, circle: "7", math: 'log<sub>5</sub>(x<sup>2</sup>+1) + log<sub>0,2</sub>(4-5x-x<sup>2</sup>) = 0' },
+            { id: 6, circle: "-3/2", math: '27<sup>x<sup>2</sup>-4x+4</sup> = 9<sup>x<sup>2</sup>-4</sup>' },
+            { id: 7, circle: "1", math: '100<sup>2x<sup>2</sup>-3</sup> = 0,1<sup>2x<sup>2</sup>-18</sup>' },
+            { id: 8, circle: "-3", math: 'log<sub>2</sub>(x<sup>2</sup>) + log<sub>1/2</sub>(2x+8) = 0' },
+            { id: 9, circle: "1/2", math: '2<sup>x<sup>2</sup>-3x-2</sup> = 0,25.16<sup>x-3</sup>' },
+            { id: 10, circle: "10", math: '3<sup>x-1</sup> = 5' },
+            { id: 11, circle: "2", math: 'log(x<sup>2</sup>-2x) = log(2x-3)' },
+            { id: 12, circle: "-2", math: '8<sup>x-2</sup> = 4<sup>1-2x</sup>' },
+            { id: 13, circle: "3", math: '2<sup>2x+3</sup> = 8&radic;2' },
+            { id: 14, circle: "4", math: 'log<sub>4</sub>(x-4) = -2' }
+        ];
+
+        let score = 0;
+        let state = [];
+        let invData = [];
+        let draggedId = null;
+        let draggedFromSlot = null; 
+        let solutionMap = {}; 
+
+        let startTime;
+        let timerInterval;
+        let timeElapsed = 0;
+        
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznnoN5exSDKuMMVH2rDniJyMg5rqBN998Dwm4J9uLenIJQmherGvQYfqQ4tzoejlQH/exec'; 
+
+        window.onload = function() {
+            setupGameData();
+        };
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            startTime = Date.now();
+            timeElapsed = 0;
+            document.getElementById('timer').innerText = "00:00";
+            timerInterval = setInterval(() => {
+                timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+                const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
+                const s = String(timeElapsed % 60).padStart(2, '0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            startTimer();
+        }
+
+        function replayGame() {
+            stopTimer();
+            document.getElementById('win-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            setupGameData();
+        }
+
+        function buildSolutionMap() {
+            solutionMap = {};
+            const ROWS = [1, 2, 3, 4, 5];
+            let rowStartIdx = 0;
+            for(let r = 0; r < 4; r++) { 
+                const parentCount = ROWS[r];
+                let nextRowStartIdx = rowStartIdx + parentCount;
+                
+                for(let c = 0; c < parentCount; c++) {
+                    const parentBrick = DATA[rowStartIdx + c];
+                    const parentVal = parentBrick.circle;
+                    const key = parentVal === null ? "TOP" : parentVal;
+                    
+                    if(!solutionMap[key]) solutionMap[key] = new Set();
+                    
+                    const child1 = DATA[nextRowStartIdx + c];
+                    solutionMap[key].add(child1.circle);
+                    
+                    const child2 = DATA[nextRowStartIdx + c + 1];
+                    solutionMap[key].add(child2.circle);
+                }
+                rowStartIdx += parentCount;
+            }
+        }
+
+        function setupGameData() {
+            score = 0;
+            timeElapsed = 0;
+            document.getElementById('score').innerText = score;
+            document.getElementById('timer').innerText = "00:00";
+            
+            buildSolutionMap();
+            
+            const ROWS = [1, 2, 3, 4, 5];
+            let idx = 0;
+            state = [];
+            invData = [];
+
+            ROWS.forEach((count, r) => {
+                const row = [];
+                for(let c=0; c<count; c++) {
+                    const item = DATA[idx];
+                    row.push({
+                        r, c,
+                        isFilled: r === 0,
+                        content: r === 0 ? item : null
+                    });
+                    if (r > 0) invData.push({ ...item, placed: false });
+                    idx++;
+                }
+                state.push(row);
+            });
+
+            invData.push({ id: 99, circle: "9", math: 'log<sub>2</sub>(x) = 3', placed: false });
+            invData.push({ id: 100, circle: "6", math: 'x + 10 = 16', placed: false });
+
+            invData.sort(() => Math.random() - 0.5);
+            render();
+        }
+
+        function render() {
+            const py = document.getElementById('pyramid');
+            py.innerHTML = '';
+            state.forEach((row, r) => {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'brick-row';
+                row.forEach((slot, c) => {
+                    const el = document.createElement('div');
+                    if (slot.isFilled) {
+                        el.className = 'brick' + (r === 0 ? ' top-brick' : ' draggable-wall-brick');
+                        el.innerHTML = `
+                            ${slot.content.circle ? `<div class="circle-label">${slot.content.circle}</div>` : ''}
+                            <div class="math-content">${slot.content.math}</div>
+                        `;
+                        
+                        if (r > 0) {
+                            el.draggable = true;
+                            el.ondragstart = (e) => {
+                                const hasChildLeft = r + 1 < state.length && state[r+1][c] && state[r+1][c].isFilled;
+                                const hasChildRight = r + 1 < state.length && state[r+1][c+1] && state[r+1][c+1].isFilled;
+                                if (hasChildLeft || hasChildRight) {
+                                    e.preventDefault();
+                                    customAlert("Không thể di chuyển!<br>Đang có viên gạch khác xây đè lên nó.", "warning");
+                                    return;
+                                }
+                                
+                                draggedId = slot.content.id;
+                                draggedFromSlot = { r, c };
+                                setTimeout(() => el.style.opacity = '0.4', 0);
+                            };
+                            el.ondragend = () => el.style.opacity = '1';
+                        }
+                    } else {
+                        el.className = 'brick empty';
+                        el.innerText = 'TRỐNG';
+                        el.ondragover = e => e.preventDefault();
+                        el.ondragenter = () => el.classList.add('drag-over');
+                        el.ondragleave = () => el.classList.remove('drag-over');
+                        el.ondrop = e => handleDrop(r, c);
+                    }
+                    rowEl.appendChild(el);
+                });
+                py.appendChild(rowEl);
+            });
+
+            const inv = document.getElementById('inventory');
+            inv.innerHTML = '';
+            invData.filter(b => !b.placed).forEach((brick, i) => {
+                const el = document.createElement('div');
+                el.className = 'brick inv-brick';
+                el.draggable = true;
+                el.innerHTML = `
+                    <div class="circle-label">${brick.circle}</div>
+                    <div class="math-content">${brick.math}</div>
+                `;
+                el.ondragstart = () => { 
+                    draggedId = brick.id; 
+                    draggedFromSlot = null;
+                    setTimeout(() => el.style.opacity = '0.4', 0); 
+                };
+                el.ondragend = () => el.style.opacity = '1';
+                inv.appendChild(el);
+            });
+        }
+
+        function checkAutoSubmit() {
+            if (state.flat().every(s => s.isFilled)) {
+                processSubmission(true); 
+            }
+        }
+
+        function handleDrop(r, c) {
+            if (r === 0) return; 
+            if (draggedFromSlot && draggedFromSlot.r === r && draggedFromSlot.c === c) return;
+
+            const slot = state[r][c];
+            if (slot.isFilled) return;
+
+            const parentLeft = (c-1 >= 0) ? state[r-1][c-1] : null;
+            const parentRight = (c < state[r-1].length) ? state[r-1][c] : null;
+
+            let pLeftFilled = parentLeft ? parentLeft.isFilled : false;
+            let pRightFilled = parentRight ? parentRight.isFilled : false;
+
+            if ((parentLeft && !pLeftFilled) || (parentRight && !pRightFilled)) {
+                customAlert("Bạn phải xây từ hàng trên xuống trước!", "warning");
+                return;
+            }
+
+            const brick = invData.find(b => b.id === draggedId);
+            if (!brick) return;
+
+            let valid = true;
+            if (parentLeft) {
+                const pKey = parentLeft.content.circle === null ? "TOP" : parentLeft.content.circle;
+                const allowed = solutionMap[pKey];
+                if (!allowed || !allowed.has(brick.circle)) valid = false;
+            }
+            if (valid && parentRight) {
+                const pKey = parentRight.content.circle === null ? "TOP" : parentRight.content.circle;
+                const allowed = solutionMap[pKey];
+                if (!allowed || !allowed.has(brick.circle)) valid = false;
+            }
+
+            if (valid) {
+                if (draggedFromSlot) {
+                    state[draggedFromSlot.r][draggedFromSlot.c].isFilled = false;
+                    state[draggedFromSlot.r][draggedFromSlot.c].content = null;
+                } else {
+                    brick.placed = true;
+                    score += 10;
+                }
+
+                slot.isFilled = true;
+                slot.content = brick;
+                
+                document.getElementById('score').innerText = score;
+                draggedId = null;
+                draggedFromSlot = null;
+                render();
+                
+                setTimeout(checkAutoSubmit, 100); 
+            } else {
+                score = Math.max(0, score - 5);
+                document.getElementById('score').innerText = score;
+                customAlert("Sai rồi!<br>Số này không phải là nghiệm của viên gạch phía trên.<br><br><b style='color:#ef4444;'>(Bị trừ 5 điểm)</b>", "error");
+            }
+        }
+
+        function submitGame(isAuto = false) {
+            const allFilled = state.flat().every(s => s.isFilled);
+            
+            if (!allFilled && !isAuto) {
+                customConfirm(
+                    "Bạn chưa hoàn thành bức tường!<br>Điểm hiện tại của bạn là <b style='color:var(--primary);font-size:18px;'>" + score + "</b>.<br><br>Bạn có chắc chắn muốn nộp bài sớm không?", 
+                    () => processSubmission(allFilled)
+                );
+            } else {
+                processSubmission(allFilled);
+            }
+        }
+
+        function processSubmission(allFilled) {
+            stopTimer(); 
+            document.getElementById('final-score').innerText = score;
+            
+            const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
+            const s = String(timeElapsed % 60).padStart(2, '0');
+            document.getElementById('final-time').innerText = `${m}:${s}`;
+
+            document.getElementById('player-name').value = '';
+            document.getElementById('save-area').style.display = 'flex';
+            document.getElementById('submit-btn').innerText = 'Lưu Online';
+            document.getElementById('submit-btn').disabled = false;
+
+            renderLeaderboard();
+            
+            const winTitle = document.getElementById('win-title');
+            if (allFilled) {
+                winTitle.innerText = "XUẤT SẮC!";
+                winTitle.style.color = "#10b981";
+            } else {
+                winTitle.innerText = "ĐÃ NỘP BÀI SỚM";
+                winTitle.style.color = "#f59e0b";
+            }
+
+            document.getElementById('win-screen').classList.remove('hidden');
+        }
+
+        function handleInventoryDrop(e) {
+            e.preventDefault();
+            if (draggedId !== null && draggedFromSlot !== null) {
+                const { r, c } = draggedFromSlot;
+                const slot = state[r][c];
+                const brick = invData.find(b => b.id === draggedId);
+                
+                slot.isFilled = false;
+                slot.content = null;
+                brick.placed = false;
+                
+                score = Math.max(0, score - 10);
+                document.getElementById('score').innerText = score;
+                
+                draggedId = null;
+                draggedFromSlot = null;
+                render();
+            }
+        }
+
+        function getLeaderboard() {
+            const data = localStorage.getItem('wall_game_lb');
+            return data ? JSON.parse(data) : [];
+        }
+
+        function renderLeaderboard() {
+            const list = getLeaderboard();
+            
+            const tableWin = document.getElementById('lb-table');
+            if (tableWin) populateTable(tableWin, list);
+            
+            const tableMain = document.getElementById('main-lb-table');
+            if (tableMain) populateTable(tableMain, list);
+        }
+
+        function populateTable(table, list) {
+            table.innerHTML = '';
+            if (list.length === 0) {
+                table.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#94a3b8; padding: 15px;">Chưa có người chơi nào</td></tr>';
+                return;
+            }
+            list.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${idx + 1} <b>${item.name}</b></td>
+                    <td style="text-align:center; color:#0284c7; font-size:13px;">⏱ ${item.time || '--:--'}</td>
+                    <td style="text-align:right; color:var(--primary-dark); font-weight:bold; font-size:15px;">${item.score} đ</td>
+                `;
+                table.appendChild(tr);
+            });
+        }
+
+        function showLeaderboard() {
+            renderLeaderboard();
+            document.getElementById('leaderboard-screen').classList.remove('hidden');
+        }
+
+        function closeLeaderboard() {
+            document.getElementById('leaderboard-screen').classList.add('hidden');
+        }
+
+        function clearLeaderboard() {
+            customConfirm("Bạn có chắc chắn muốn xóa toàn bộ bảng xếp hạng lưu trên máy này không?", () => {
+                localStorage.removeItem('wall_game_lb');
+                renderLeaderboard();
+                customAlert("Đã xóa dữ liệu thành công!", "success");
+            });
+        }
+
+        async function saveScore() {
+            const name = document.getElementById('player-name').value.trim();
+            if (!name) {
+                customAlert("Vui lòng nhập tên của bạn!", "warning");
+                return;
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.innerText = 'Đang gửi...';
+            submitBtn.disabled = true;
+
+            const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
+            const s = String(timeElapsed % 60).padStart(2, '0');
+            const timeString = `${m}:${s}`;
+
+            const list = getLeaderboard();
+            list.push({ name: name, score: score, time: timeString, timeSec: timeElapsed });
+            
+            list.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return (a.timeSec || 99999) - (b.timeSec || 99999);
+            });
+            const top10 = list.slice(0, 10);
+            localStorage.setItem('wall_game_lb', JSON.stringify(top10));
+
+            if (GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE') {
+                try {
+                    const url = new URL(GOOGLE_SCRIPT_URL);
+                    url.searchParams.append('name', name);
+                    url.searchParams.append('score', score);
+                    url.searchParams.append('time', timeString);
+
+                    await fetch(url, { method: 'GET', mode: 'no-cors' });
+                    customAlert("Đã ghi nhận điểm lên hệ thống Online!", "success");
+                } catch (e) {
+                    customAlert("Đã lưu máy.<br>Lỗi mạng, không thể kết nối hệ thống Online lúc này.", "warning");
+                }
+            } else {
+                customAlert("Đã lưu tại máy!<br>Chưa cấu hình Google Script URL để lưu Online.", "info");
+            }
+
+            document.getElementById('save-area').style.display = 'none';
+            renderLeaderboard();
+        }
+    </script>
+</body>
+</html>
