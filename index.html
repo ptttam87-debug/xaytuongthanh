@@ -100,8 +100,22 @@
             padding-top: 20px; 
             box-sizing: border-box;
             color: var(--brick-text);
-            /* Chặn cuộn màn hình khi chạm vào gạch trên điện thoại */
-            touch-action: none; 
+            cursor: pointer;
+            /* Đã gỡ lệnh chặn cuộn trang ở đây để mobile vuốt được */
+        }
+
+        /* HIỆU ỨNG KHI CHẠM CHỌN GẠCH (DÀNH CHO ĐIỆN THOẠI) */
+        .selected-brick {
+            border-color: #4CAF50 !important;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), 0 8px 15px rgba(0,0,0,0.2) !important;
+            transform: scale(1.08) !important;
+            z-index: 50;
+            animation: pulse 0.8s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px rgba(76, 175, 80, 0.5); transform: scale(1.05); }
+            100% { box-shadow: 0 0 25px rgba(76, 175, 80, 1); transform: scale(1.1); }
         }
 
         .brick.empty {
@@ -128,11 +142,11 @@
             box-shadow: 0px 6px 0px #B71C1C, 0px 8px 15px rgba(229, 57, 53, 0.3);
             color: white;
             padding-top: 0; 
+            cursor: default;
         }
 
         .draggable-wall-brick { 
             cursor: grab; 
-            touch-action: none; /* Khóa cuộn trang */
         }
         .draggable-wall-brick:active { cursor: grabbing; }
         
@@ -179,6 +193,7 @@
             display: flex;
             flex-direction: column;
             box-shadow: -5px 0 20px rgba(0,0,0,0.03);
+            cursor: pointer;
         }
 
         .inv-header {
@@ -191,6 +206,7 @@
             text-align: center;
             z-index: 5;
             letter-spacing: 0.5px;
+            pointer-events: none;
         }
 
         .inv-scroll {
@@ -198,6 +214,24 @@
             overflow-y: auto;
             padding: 20px;
             background-color: #FAFAFA;
+            /* Đảm bảo cuộn mượt mà trên iPhone/iPad */
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        /* THIẾT KẾ THANH CUỘN (SCROLLBAR) CHO KHO GẠCH */
+        .inv-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .inv-scroll::-webkit-scrollbar-track {
+            background: #E1F5FE; 
+            border-radius: 10px;
+        }
+        .inv-scroll::-webkit-scrollbar-thumb {
+            background: #03A9F4; 
+            border-radius: 10px;
+        }
+        .inv-scroll::-webkit-scrollbar-thumb:hover {
+            background: #0288D1; 
         }
 
         .pile {
@@ -213,7 +247,7 @@
             width: 160px; 
             height: 105px;
             cursor: grab;
-            touch-action: none; /* Khóa cuộn trang khi chạm gạch */
+            /* Đã gỡ lệnh chặn cuộn trang ở đây để mobile vuốt được */
         }
 
         .stats { display: flex; align-items: center; gap: 12px; }
@@ -342,8 +376,8 @@
             <div class="wall-label" style="position: absolute; top: 15px; left: 15px; color: #0288D1; font-weight: 900; font-size: 14px; background: #E1F5FE; padding: 5px 15px; border-radius: 20px; border: 2px dashed #4FC3F7;">🏰 THÁP TOÁN HỌC</div>
             <div class="pyramid-container" id="pyramid"></div>
         </div>
-        <div class="inventory-area" ondragover="event.preventDefault()" ondrop="handleInventoryDrop(event)">
-            <div class="inv-header">🎒 KHO GẠCH (Kéo thả tự do)</div>
+        <div class="inventory-area" id="inventory-area" ondragover="event.preventDefault()" ondrop="handleInventoryDrop(event)" onclick="handleInventoryAreaClick()">
+            <div class="inv-header">🎒 KHO GẠCH (Cuộn dọc & Chạm để Xây)</div>
             <div class="inv-scroll">
                 <div class="pile" id="inventory"></div>
             </div>
@@ -353,12 +387,12 @@
     <div id="start-screen" class="overlay">
         <div class="modal">
             <h3 style="margin-top: 0; font-size: 26px; color: #0288D1; text-shadow: 1px 1px 0 #B3E5FC;">🎮 HƯỚNG DẪN 🎮</h3>
-            <p style="font-size: 16px; color: #374151; line-height: 1.5; font-weight: 700;">Kéo gạch vào ô trống sao cho số trên gạch là <b>nghiệm</b> của phương trình ở hàng trên.</p>
+            <p style="font-size: 16px; color: #374151; line-height: 1.5; font-weight: 700;">Chạm vào gạch sao cho số trên gạch là <b>nghiệm</b> của phương trình ở hàng trên.</p>
             <div style="background: #E1F5FE; padding: 12px; border-radius: 15px; margin-bottom: 12px; border: 2px solid #81D4FA;">
-                <p style="font-size: 14px; color: #0277BD; margin: 0; font-weight: 700;">💡 Mẹo: Có thể đổi vị trí gạch trên tường hoặc kéo thả về kho gạch.</p>
+                <p style="font-size: 14px; color: #0277BD; margin: 0; font-weight: 700;">💡 Dùng điện thoại: <b>Vuốt để cuộn</b>, <b>Chạm gạch</b> (gạch sẽ sáng lên), sau đó <b>chạm ô trống</b> để xây.</p>
             </div>
             <div style="background: #FFEBEE; padding: 12px; border-radius: 15px; margin-bottom: 25px; border: 2px solid #EF9A9A;">
-                <p style="font-size: 14px; color: #C62828; margin: 0; font-weight: 900;">⚠️ Lưu ý: Phải xây từ trên xuống dưới! Kéo sai trừ 5 điểm.</p>
+                <p style="font-size: 14px; color: #C62828; margin: 0; font-weight: 900;">⚠️ Lưu ý: Phải xây từ trên xuống dưới! Sai trừ 5 điểm.</p>
             </div>
             <button onclick="startGame()" style="background:#FF9800; color:white; border:none; padding:18px 30px; font-weight:900; cursor:pointer; border-radius:20px; width:100%; font-size: 18px; box-shadow: 0 6px 0 #E65100; font-family: inherit; transition: all 0.1s;" onmousedown="this.style.transform='translateY(6px)'; this.style.boxShadow='0 0 0 #E65100';" onmouseup="this.style.transform='none'; this.style.boxShadow='0 6px 0 #E65100';">🚀 BẮT ĐẦU NGAY!</button>
         </div>
@@ -431,7 +465,7 @@
         bgMusic.loop = true; bgMusic.volume = 0.4; 
 
         let isMusicPlaying = true;
-        let globalLeaderboardData = []; // Danh sách tải từ Google
+        let globalLeaderboardData = []; 
 
         function toggleMusic() {
             const btn = document.getElementById('music-btn');
@@ -486,6 +520,9 @@
         let score = 0, state = [], invData = [], draggedId = null, draggedFromSlot = null, solutionMap = {}; 
         let startTime, timerInterval, timeElapsed = 0;
         
+        let selectedBrickId = null;
+        let selectedFromSlot = null;
+
         window.onload = function() { setupGameData(); loadOnlineLeaderboard(); };
 
         function startTimer() {
@@ -505,7 +542,7 @@
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('timer-box').style.display = 'block'; 
             startTimer();
-            if (isMusicPlaying) bgMusic.play().catch(e => console.log("Chờ tương tác để phát nhạc"));
+            if (isMusicPlaying) bgMusic.play().catch(e => {});
         }
 
         function replayGame() {
@@ -531,6 +568,7 @@
 
         function setupGameData() {
             score = 0; timeElapsed = 0;
+            selectedBrickId = null; selectedFromSlot = null;
             document.getElementById('score').innerText = score; 
             document.getElementById('timer').innerText = "00:00";
             document.getElementById('timer-box').style.display = 'none'; 
@@ -553,6 +591,40 @@
             render();
         }
 
+        function selectBrick(id, r, c) {
+            if (selectedBrickId === id) {
+                selectedBrickId = null;
+                selectedFromSlot = null;
+            } else {
+                selectedBrickId = id;
+                selectedFromSlot = (r !== null && c !== null) ? {r, c} : null;
+            }
+            render();
+        }
+
+        function handleTapDrop(r, c) {
+            if (selectedBrickId !== null) {
+                draggedId = selectedBrickId;
+                draggedFromSlot = selectedFromSlot;
+                handleDrop(r, c); 
+                selectedBrickId = null;
+                selectedFromSlot = null;
+                render();
+            }
+        }
+
+        function handleInventoryAreaClick() {
+            if (selectedBrickId !== null && selectedFromSlot !== null) {
+                let fakeEvent = { preventDefault: ()=>{} };
+                draggedId = selectedBrickId;
+                draggedFromSlot = selectedFromSlot;
+                handleInventoryDrop(fakeEvent);
+                selectedBrickId = null;
+                selectedFromSlot = null;
+                render();
+            }
+        }
+
         function render() {
             const py = document.getElementById('pyramid'); py.innerHTML = '';
             state.forEach((row, r) => {
@@ -561,7 +633,13 @@
                     const el = document.createElement('div');
                     if (slot.isFilled) {
                         el.className = 'brick' + (r === 0 ? ' top-brick' : ' draggable-wall-brick');
+                        
+                        if (slot.content.id === selectedBrickId) {
+                            el.classList.add('selected-brick');
+                        }
+
                         el.innerHTML = `${slot.content.circle ? `<div class="circle-label">${slot.content.circle}</div>` : ''}<div class="math-content">${slot.content.math}</div>`;
+                        
                         if (r > 0) {
                             el.draggable = true;
                             el.ondragstart = (e) => {
@@ -572,6 +650,14 @@
                                 setTimeout(() => el.style.opacity = '0.5', 0);
                             };
                             el.ondragend = () => el.style.opacity = '1';
+
+                            el.onclick = (e) => {
+                                e.stopPropagation(); 
+                                if ((r+1 < state.length && state[r+1][c] && state[r+1][c].isFilled) || (r+1 < state.length && state[r+1][c+1] && state[r+1][c+1].isFilled)) {
+                                    customAlert("Không thể di chuyển!<br>Đang có viên gạch khác đè lên rùi.", "warning"); return;
+                                }
+                                selectBrick(slot.content.id, r, c);
+                            };
                         }
                     } else {
                         el.className = 'brick empty'; el.innerText = 'TRỐNG';
@@ -579,6 +665,11 @@
                         el.ondragenter = () => el.classList.add('drag-over');
                         el.ondragleave = () => el.classList.remove('drag-over');
                         el.ondrop = () => handleDrop(r, c);
+                        
+                        el.onclick = (e) => {
+                            e.stopPropagation();
+                            handleTapDrop(r, c);
+                        };
                     }
                     rowEl.appendChild(el);
                 });
@@ -588,9 +679,21 @@
             const inv = document.getElementById('inventory'); inv.innerHTML = '';
             invData.filter(b => !b.placed).forEach((brick) => {
                 const el = document.createElement('div'); el.className = 'brick inv-brick'; el.draggable = true;
+                
+                if (brick.id === selectedBrickId) {
+                    el.classList.add('selected-brick');
+                }
+
                 el.innerHTML = `<div class="circle-label">${brick.circle}</div><div class="math-content">${brick.math}</div>`;
+                
                 el.ondragstart = () => { draggedId = brick.id; draggedFromSlot = null; setTimeout(() => el.style.opacity = '0.5', 0); };
                 el.ondragend = () => el.style.opacity = '1';
+
+                el.onclick = (e) => {
+                    e.stopPropagation();
+                    selectBrick(brick.id, null, null);
+                };
+
                 inv.appendChild(el);
             });
         }
@@ -663,7 +766,6 @@
             }
         }
 
-        // TẢI DỮ LIỆU TỪ GOOGLE SCRIPT
         async function loadOnlineLeaderboard(loadingId = '', tableId = '') {
             if (!GOOGLE_SCRIPT_URL) return; 
             
@@ -700,19 +802,15 @@
                 list.forEach((item, idx) => {
                     let timeStr = String(item.time || '--:--');
                     
-                    // Chuyển đổi các định dạng bị lỗi cũ ("00p 31s") về đúng dạng "00:31"
                     if (timeStr.includes('p') && timeStr.includes('s')) {
                         timeStr = timeStr.replace('p ', ':').replace('s', '');
                     }
 
-                    // Dịch lại chuỗi ngày tháng bị Google Sheets tự động đổi (vd: "1899-12-30T17:31:00.000Z") thành dạng "00:31"
                     if (timeStr.includes('T') && timeStr.includes('Z')) {
                         let d = new Date(timeStr);
                         if (!isNaN(d)) {
                             let hr = d.getHours();
                             let min = d.getMinutes();
-                            // Do lệch múi giờ, đôi khi số phút nằm ở mục Giờ, giây nằm ở mục Phút.
-                            // Cách an toàn nhất là đọc trực tiếp từ dữ liệu giây lưu trong timeSec (nếu có)
                             if (item.timeSec) {
                                 let m = String(Math.floor(item.timeSec / 60)).padStart(2, '0');
                                 let s = String(item.timeSec % 60).padStart(2, '0');
@@ -754,7 +852,6 @@
 
             const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
             const s = String(timeElapsed % 60).padStart(2, '0');
-            // Gửi dưới định dạng chữ đặc biệt để Google Sheet KHÔNG TỰ ĐỔI thành giờ, sau đó code tải về sẽ dịch lại thành 00:31
             const timeString = `${m}p ${s}s`;
 
             try {
