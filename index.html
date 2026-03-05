@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xây Tường Thành - Phong Cách Hoạt Hình</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/drag-drop-touch"></script>
     <style>
         :root {
             --primary: #E53935; 
@@ -99,6 +100,8 @@
             padding-top: 20px; 
             box-sizing: border-box;
             color: var(--brick-text);
+            /* Chặn cuộn màn hình khi chạm vào gạch trên điện thoại */
+            touch-action: none; 
         }
 
         .brick.empty {
@@ -127,7 +130,10 @@
             padding-top: 0; 
         }
 
-        .draggable-wall-brick { cursor: grab; }
+        .draggable-wall-brick { 
+            cursor: grab; 
+            touch-action: none; /* Khóa cuộn trang */
+        }
         .draggable-wall-brick:active { cursor: grabbing; }
         
         .draggable-wall-brick:hover, .inv-brick:hover {
@@ -207,6 +213,7 @@
             width: 160px; 
             height: 105px;
             cursor: grab;
+            touch-action: none; /* Khóa cuộn trang khi chạm gạch */
         }
 
         .stats { display: flex; align-items: center; gap: 12px; }
@@ -693,16 +700,26 @@
                 list.forEach((item, idx) => {
                     let timeStr = String(item.time || '--:--');
                     
-                    // Xử lý những record cũ lưu dạng "00p 31s"
-                    timeStr = timeStr.replace('p ', ':').replace('s', '');
+                    // Chuyển đổi các định dạng bị lỗi cũ ("00p 31s") về đúng dạng "00:31"
+                    if (timeStr.includes('p') && timeStr.includes('s')) {
+                        timeStr = timeStr.replace('p ', ':').replace('s', '');
+                    }
 
-                    // Dịch lại chuỗi ngày tháng dài ngoằng của Google Sheets thành số phút:giây
+                    // Dịch lại chuỗi ngày tháng bị Google Sheets tự động đổi (vd: "1899-12-30T17:31:00.000Z") thành dạng "00:31"
                     if (timeStr.includes('T') && timeStr.includes('Z')) {
                         let d = new Date(timeStr);
                         if (!isNaN(d)) {
                             let hr = d.getHours();
                             let min = d.getMinutes();
-                            timeStr = `${String(hr).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+                            // Do lệch múi giờ, đôi khi số phút nằm ở mục Giờ, giây nằm ở mục Phút.
+                            // Cách an toàn nhất là đọc trực tiếp từ dữ liệu giây lưu trong timeSec (nếu có)
+                            if (item.timeSec) {
+                                let m = String(Math.floor(item.timeSec / 60)).padStart(2, '0');
+                                let s = String(item.timeSec % 60).padStart(2, '0');
+                                timeStr = `${m}:${s}`;
+                            } else {
+                                timeStr = `${String(hr).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+                            }
                         }
                     }
 
@@ -737,7 +754,8 @@
 
             const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
             const s = String(timeElapsed % 60).padStart(2, '0');
-            const timeString = `${m}:${s}`;
+            // Gửi dưới định dạng chữ đặc biệt để Google Sheet KHÔNG TỰ ĐỔI thành giờ, sau đó code tải về sẽ dịch lại thành 00:31
+            const timeString = `${m}p ${s}s`;
 
             try {
                 const url = new URL(GOOGLE_SCRIPT_URL);
