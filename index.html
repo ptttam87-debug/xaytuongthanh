@@ -413,9 +413,9 @@
     </div>
 
     <script>
-        // ======= LINK GOOGLE SCRIPT GỐC ĐÃ ĐƯỢC CẬP NHẬT =======
+        // ======= LINK GOOGLE SCRIPT GỐC =======
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznnoN5exSDKuMMVH2rDniJyMg5rqBN998Dwm4J9uLenIJQmherGvQYfqQ4tzoejlQH/exec';
-        // =========================================================
+        // ======================================
 
         const sfxCorrect = new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg');
         const sfxWrong = new Audio('https://actions.google.com/sounds/v1/cartoon/slip_and_fall.ogg');
@@ -496,7 +496,7 @@
 
         function startGame() {
             document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('timer-box').style.display = 'block'; // Hiển thị thời gian khi chơi
+            document.getElementById('timer-box').style.display = 'block'; 
             startTimer();
             if (isMusicPlaying) bgMusic.play().catch(e => console.log("Chờ tương tác để phát nhạc"));
         }
@@ -526,7 +526,7 @@
             score = 0; timeElapsed = 0;
             document.getElementById('score').innerText = score; 
             document.getElementById('timer').innerText = "00:00";
-            document.getElementById('timer-box').style.display = 'none'; // Ẩn đồng hồ lúc ban đầu
+            document.getElementById('timer-box').style.display = 'none'; 
             buildSolutionMap();
             
             const ROWS = [1, 2, 3, 4, 5]; let idx = 0; state = []; invData = [];
@@ -625,11 +625,11 @@
 
         function processSubmission(allFilled) {
             stopTimer(); bgMusic.pause(); 
-            document.getElementById('timer-box').style.display = 'none'; // Ẩn đồng hồ khi nộp bài
+            document.getElementById('timer-box').style.display = 'none'; 
 
             document.getElementById('final-score').innerText = score;
             const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0'); const s = String(timeElapsed % 60).padStart(2, '0');
-            document.getElementById('final-time').innerText = `${m}p ${s}s`;
+            document.getElementById('final-time').innerText = `${m}:${s}`;
             
             document.getElementById('player-name').value = '';
             document.getElementById('save-area').style.display = 'flex';
@@ -691,22 +691,19 @@
                 html += '<tr><td colspan="4" style="text-align:center; color:#9CA3AF; padding: 15px;">Chưa có cao thủ nào!</td></tr>';
             } else {
                 list.forEach((item, idx) => {
-                    let timeStr = item.time || '--:--';
+                    let timeStr = String(item.time || '--:--');
                     
-                    // Lọc và sửa lỗi nếu Google Sheets trả về thời gian dạng chuỗi Date (vì Sheets tự hiểu 00:31 là 12:31 sáng)
-                    if (typeof timeStr === 'string' && (timeStr.includes('T') || timeStr.includes('Z'))) {
+                    // Xử lý những record cũ lưu dạng "00p 31s"
+                    timeStr = timeStr.replace('p ', ':').replace('s', '');
+
+                    // Dịch lại chuỗi ngày tháng dài ngoằng của Google Sheets thành số phút:giây
+                    if (timeStr.includes('T') && timeStr.includes('Z')) {
                         let d = new Date(timeStr);
                         if (!isNaN(d)) {
-                            let mins = d.getMinutes();
-                            let secs = d.getSeconds();
-                            if (d.getHours() === 0 && mins > 0 && secs === 0) {
-                                timeStr = `00p ${String(mins).padStart(2, '0')}s`;
-                            } else {
-                                timeStr = `${String(mins).padStart(2, '0')}p ${String(secs).padStart(2, '0')}s`;
-                            }
+                            let hr = d.getHours();
+                            let min = d.getMinutes();
+                            timeStr = `${String(hr).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
                         }
-                    } else if (typeof timeStr === 'string' && timeStr.match(/^\d{2}:\d{2}$/)) {
-                        timeStr = timeStr.replace(':', 'p ') + 's'; // Sửa bản ghi cũ
                     }
 
                     html += `
@@ -740,8 +737,7 @@
 
             const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
             const s = String(timeElapsed % 60).padStart(2, '0');
-            // Cập nhật lại định dạng Gửi Điểm: Ép thành dạng chữ (vd: 01p 30s) để Google Sheets không tự đổi thành giờ nữa
-            const timeString = `${m}p ${s}s`;
+            const timeString = `${m}:${s}`;
 
             try {
                 const url = new URL(GOOGLE_SCRIPT_URL);
