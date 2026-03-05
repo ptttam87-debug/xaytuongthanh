@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xây Tường Thành - Phong Cách Hoạt Hình</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/drag-drop-touch"></script>
     <style>
         :root {
             --primary: #E53935; 
@@ -61,6 +60,7 @@
 
         .wall-area {
             flex: 3;
+            min-height: 0; /* Quan trọng để cuộn mượt */
             background-color: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(5px);
             display: flex;
@@ -101,10 +101,8 @@
             box-sizing: border-box;
             color: var(--brick-text);
             cursor: pointer;
-            /* Đã gỡ lệnh chặn cuộn trang ở đây để mobile vuốt được */
         }
 
-        /* HIỆU ỨNG KHI CHẠM CHỌN GẠCH (DÀNH CHO ĐIỆN THOẠI) */
         .selected-brick {
             border-color: #4CAF50 !important;
             box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), 0 8px 15px rgba(0,0,0,0.2) !important;
@@ -116,6 +114,11 @@
         @keyframes pulse {
             0% { box-shadow: 0 0 15px rgba(76, 175, 80, 0.5); transform: scale(1.05); }
             100% { box-shadow: 0 0 25px rgba(76, 175, 80, 1); transform: scale(1.1); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(3px); }
         }
 
         .brick.empty {
@@ -145,9 +148,7 @@
             cursor: default;
         }
 
-        .draggable-wall-brick { 
-            cursor: grab; 
-        }
+        .draggable-wall-brick { cursor: grab; }
         .draggable-wall-brick:active { cursor: grabbing; }
         
         .draggable-wall-brick:hover, .inv-brick:hover {
@@ -189,6 +190,7 @@
 
         .inventory-area {
             flex: 2;
+            min-height: 0; /* Quan trọng để cuộn mượt trên mobile */
             background: #FFFFFF;
             display: flex;
             flex-direction: column;
@@ -197,7 +199,7 @@
         }
 
         .inv-header {
-            padding: 15px;
+            padding: 10px;
             background: #FFF3E0;
             border-bottom: 3px solid #FFE0B2;
             font-weight: 900;
@@ -205,8 +207,15 @@
             color: #E65100;
             text-align: center;
             z-index: 5;
-            letter-spacing: 0.5px;
             pointer-events: none;
+        }
+
+        .scroll-hint {
+            font-size: 12px; 
+            color: #0288D1; 
+            margin-top: 4px; 
+            font-weight: bold; 
+            animation: bounce 1.5s infinite;
         }
 
         .inv-scroll {
@@ -214,25 +223,14 @@
             overflow-y: auto;
             padding: 20px;
             background-color: #FAFAFA;
-            /* Đảm bảo cuộn mượt mà trên iPhone/iPad */
-            -webkit-overflow-scrolling: touch; 
+            -webkit-overflow-scrolling: touch; /* Giúp vuốt mượt trên iPhone/iPad */
         }
 
-        /* THIẾT KẾ THANH CUỘN (SCROLLBAR) CHO KHO GẠCH */
-        .inv-scroll::-webkit-scrollbar {
-            width: 8px;
-        }
-        .inv-scroll::-webkit-scrollbar-track {
-            background: #E1F5FE; 
-            border-radius: 10px;
-        }
-        .inv-scroll::-webkit-scrollbar-thumb {
-            background: #03A9F4; 
-            border-radius: 10px;
-        }
-        .inv-scroll::-webkit-scrollbar-thumb:hover {
-            background: #0288D1; 
-        }
+        /* Thanh cuộn nổi bật */
+        .inv-scroll::-webkit-scrollbar { width: 10px; }
+        .inv-scroll::-webkit-scrollbar-track { background: #E1F5FE; border-radius: 10px; }
+        .inv-scroll::-webkit-scrollbar-thumb { background: #03A9F4; border-radius: 10px; }
+        .inv-scroll::-webkit-scrollbar-thumb:hover { background: #0288D1; }
 
         .pile {
             display: flex;
@@ -240,14 +238,13 @@
             justify-content: center;
             gap: 20px;             
             padding-top: 10px;
-            padding-bottom: 40px;
+            padding-bottom: 60px; /* Thêm khoảng trống ở đáy để dễ cuộn */
         }
 
         .inv-brick {
             width: 160px; 
             height: 105px;
             cursor: grab;
-            /* Đã gỡ lệnh chặn cuộn trang ở đây để mobile vuốt được */
         }
 
         .stats { display: flex; align-items: center; gap: 12px; }
@@ -293,21 +290,13 @@
         sub { font-size: 0.7em; vertical-align: sub; }
         sup { font-size: 0.7em; vertical-align: super; }
 
-        .overlay {
-            position: fixed; inset: 0; background: rgba(2, 119, 189, 0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px);
-        }
-        .modal {
-            background: #FFFFFF; padding: 35px; border-radius: 25px; text-align: center; max-width: 520px; width: 95%; border: 4px solid #4FC3F7; box-shadow: 0 15px 0px #0288D1, 0 25px 40px rgba(0,0,0,0.3); position: relative;
-        }
+        .overlay { position: fixed; inset: 0; background: rgba(2, 119, 189, 0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal { background: #FFFFFF; padding: 35px; border-radius: 25px; text-align: center; max-width: 520px; width: 95%; border: 4px solid #4FC3F7; box-shadow: 0 15px 0px #0288D1, 0 25px 40px rgba(0,0,0,0.3); position: relative; }
         .hidden { display: none !important; }
 
-        .dialog-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
-        }
+        .dialog-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
         .dialog-overlay.active { opacity: 1; pointer-events: auto; }
-        .dialog-box {
-            background: white; padding: 25px; border-radius: 20px; text-align: center; max-width: 350px; width: 90%; box-shadow: 0 10px 0px rgba(0,0,0,0.1); transform: scale(0.9); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 4px solid var(--primary);
-        }
+        .dialog-box { background: white; padding: 25px; border-radius: 20px; text-align: center; max-width: 350px; width: 90%; box-shadow: 0 10px 0px rgba(0,0,0,0.1); transform: scale(0.9); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 4px solid var(--primary); }
         .dialog-overlay.active .dialog-box { transform: scale(1); }
         .dialog-icon { font-size: 55px; margin-bottom: 10px; line-height: 1; }
         .dialog-message { font-size: 16px; color: #374151; margin-bottom: 25px; line-height: 1.5; font-weight: 700; }
@@ -318,21 +307,9 @@
         .btn-confirm-action { background: var(--primary); color: white; box-shadow: 0 4px 0px var(--primary-dark); }
         .btn-cancel-action { background: #E2E8F0; color: #475569; box-shadow: 0 4px 0px #CBD5E1; }
 
-        .leaderboard-box {
-            text-align: left; max-height: 250px; overflow-y: auto; background: #F0F9FF; padding: 15px; border-radius: 15px; margin: 20px 0; border: 3px solid #BAE6FD;
-        }
-        
+        .leaderboard-box { text-align: left; max-height: 250px; overflow-y: auto; background: #F0F9FF; padding: 15px; border-radius: 15px; margin: 20px 0; border: 3px solid #BAE6FD; }
         .lb-table { width: 100%; font-size: 15px; border-collapse: collapse; font-weight: 700; }
-        .lb-table th { 
-            padding: 10px 8px; 
-            border-bottom: 3px solid #81D4FA; 
-            background: #E1F5FE; 
-            color: #0288D1; 
-            position: sticky; 
-            top: 0; 
-            text-align: left;
-            z-index: 2;
-        }
+        .lb-table th { padding: 10px 8px; border-bottom: 3px solid #81D4FA; background: #E1F5FE; color: #0288D1; position: sticky; top: 0; text-align: left; z-index: 2; }
         .lb-table td { padding: 12px 8px; border-bottom: 2px dashed #BAE6FD; }
         
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
@@ -341,6 +318,7 @@
         .input-group button { background: #03A9F4; color: white; border: none; padding: 12px 20px; border-radius: 15px; cursor: pointer; font-weight: 900; font-size: 15px; box-shadow: 0 4px 0px #0288D1; font-family: inherit; }
         .input-group button:active { transform: translateY(4px); box-shadow: 0 0px 0px #0288D1; }
 
+        /* Tối ưu riêng cho màn hình điện thoại nhỏ */
         @media (max-width: 800px) {
             .header-title { display: none; } 
             .stats { gap: 8px; font-size: 13px; }
@@ -349,6 +327,10 @@
 
         @media (max-width: 600px) {
             .main-container { flex-direction: column; }
+            /* Cố định tỷ lệ màn hình trên điện thoại để luôn hiển thị cuộn */
+            .wall-area { flex: 4; min-height: 0; border-right: none; border-bottom: 4px dashed #4FC3F7; }
+            .inventory-area { flex: 3; min-height: 0; }
+            
             .brick { width: 120px; height: 85px; padding-top: 15px; border-width: 2px; }
             .circle-label { width: 32px; height: 32px; font-size: 13px; top: -12px; left: -10px; border-width: 2px; }
             .math-content { font-size: 13px; }
@@ -377,7 +359,10 @@
             <div class="pyramid-container" id="pyramid"></div>
         </div>
         <div class="inventory-area" id="inventory-area" ondragover="event.preventDefault()" ondrop="handleInventoryDrop(event)" onclick="handleInventoryAreaClick()">
-            <div class="inv-header">🎒 KHO GẠCH (Cuộn dọc & Chạm để Xây)</div>
+            <div class="inv-header">
+                🎒 KHO GẠCH (Chạm để Xây)
+                <div class="scroll-hint">⬇️ Vuốt lên/xuống để xem thêm gạch ⬇️</div>
+            </div>
             <div class="inv-scroll">
                 <div class="pile" id="inventory"></div>
             </div>
@@ -389,7 +374,7 @@
             <h3 style="margin-top: 0; font-size: 26px; color: #0288D1; text-shadow: 1px 1px 0 #B3E5FC;">🎮 HƯỚNG DẪN 🎮</h3>
             <p style="font-size: 16px; color: #374151; line-height: 1.5; font-weight: 700;">Chạm vào gạch sao cho số trên gạch là <b>nghiệm</b> của phương trình ở hàng trên.</p>
             <div style="background: #E1F5FE; padding: 12px; border-radius: 15px; margin-bottom: 12px; border: 2px solid #81D4FA;">
-                <p style="font-size: 14px; color: #0277BD; margin: 0; font-weight: 700;">💡 Dùng điện thoại: <b>Vuốt để cuộn</b>, <b>Chạm gạch</b> (gạch sẽ sáng lên), sau đó <b>chạm ô trống</b> để xây.</p>
+                <p style="font-size: 14px; color: #0277BD; margin: 0; font-weight: 700;">💡 Dùng điện thoại: <b>Vuốt kho gạch</b>, <b>Chạm gạch</b> (gạch sẽ sáng lên), sau đó <b>chạm ô trống</b> để xây.</p>
             </div>
             <div style="background: #FFEBEE; padding: 12px; border-radius: 15px; margin-bottom: 25px; border: 2px solid #EF9A9A;">
                 <p style="font-size: 14px; color: #C62828; margin: 0; font-weight: 900;">⚠️ Lưu ý: Phải xây từ trên xuống dưới! Sai trừ 5 điểm.</p>
@@ -766,6 +751,7 @@
             }
         }
 
+        // TẢI DỮ LIỆU TỪ GOOGLE SCRIPT
         async function loadOnlineLeaderboard(loadingId = '', tableId = '') {
             if (!GOOGLE_SCRIPT_URL) return; 
             
