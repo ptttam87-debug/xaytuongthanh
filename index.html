@@ -504,8 +504,7 @@
                 <table class="lb-table" id="main-lb-table"></table>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="clearLeaderboard()" style="background:#EF5350; color:white; border:none; padding:15px; cursor:pointer; border-radius:15px; font-weight: 900; flex: 1; font-size: 14px; box-shadow: 0 4px 0 #C62828; font-family: inherit;">🗑 XÓA</button>
-                <button onclick="closeLeaderboard()" style="background:#B0BEC5; color:#374151; border:none; padding:15px; cursor:pointer; border-radius:15px; font-weight: 900; flex: 2; font-size: 16px; box-shadow: 0 4px 0 #78909C; font-family: inherit;">❌ ĐÓNG</button>
+                <button onclick="closeLeaderboard()" style="background:#B0BEC5; color:#374151; border:none; padding:15px; cursor:pointer; border-radius:15px; font-weight: 900; flex: 1; font-size: 16px; box-shadow: 0 4px 0 #78909C; font-family: inherit;">❌ ĐÓNG</button>
             </div>
         </div>
     </div>
@@ -537,7 +536,7 @@
         const sfxWrong = new Audio('https://actions.google.com/sounds/v1/cartoon/slip_and_fall.ogg');
         const sfxWin = new Audio('https://actions.google.com/sounds/v1/cartoon/ta_da.ogg');
         
-        // NHẠC NỀN THEO YÊU CẦU: Gắn với file mp3 cô tải lên
+        // NHẠC NỀN
         const bgMusic = new Audio('tuongthanh.mp3'); 
         bgMusic.loop = true;
         bgMusic.volume = 0.4; 
@@ -589,7 +588,7 @@
             pendingConfirmCallback = null;
         }
 
-        // --- GAME LOGIC (Giữ nguyên 100% công thức Toán) ---
+        // --- GAME LOGIC ---
         const DATA = [
             { id: 0, circle: null, math: 'log<sub>9</sub>[(2x-1)<sup>2</sup>] = 2' },
             { id: 1, circle: "5", math: 'log<sub>3</sub>(x<sup>2</sup>+x+3) = 1' },
@@ -822,7 +821,6 @@
             }
 
             if (valid) {
-                // Phát âm thanh kéo đúng
                 sfxCorrect.currentTime = 0;
                 sfxCorrect.play().catch(e => {});
 
@@ -844,7 +842,6 @@
                 
                 setTimeout(checkAutoSubmit, 100); 
             } else {
-                // Phát âm thanh kéo sai
                 sfxWrong.currentTime = 0;
                 sfxWrong.play().catch(e => {});
 
@@ -958,14 +955,6 @@
 
         function closeLeaderboard() {
             document.getElementById('leaderboard-screen').classList.add('hidden');
-        }
-
-        function clearLeaderboard() {
-            customConfirm("Chắc chắn muốn xóa toàn bộ bảng xếp hạng lưu trên máy này không?", () => {
-                localStorage.removeItem('wall_game_lb');
-                renderLeaderboard();
-                customAlert("Đã xóa dữ liệu thành công!", "success");
-            });
         }
 
         async function saveScore() {
