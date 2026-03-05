@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xây Tường Thành - Offline</title>
+    <title>Xây Tường Thành - Phong Cách Hoạt Hình</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #FF8C00;
-            --primary-dark: #E67E00;
-            --brick-light: #FFB042;
-            --brick-main: #FF8C00;
-            --brick-border: #CC7000;
-            --brick-shadow: #995400;
-            --bg: #f1f5f9;
-            --wall-bg: #e2e8f0;
-            --brick-text: #1a1a1a;
+            /* Tông màu hoạt hình tươi sáng (Xanh - Trắng - Vàng - Đỏ) */
+            --primary: #E53935; /* Đỏ dễ thương */
+            --primary-dark: #C62828;
+            --brick-light: #FFFDE7; /* Vàng nhạt bánh quy */
+            --brick-main: #FFF9C4;
+            --brick-border: #FBC02D;
+            --brick-shadow: #F57F17;
+            --bg: #E1F5FE; /* Xanh da trời nhạt */
+            --wall-bg: #FFFFFF;
+            --brick-text: #1A237E; /* Xanh đen đậm để dễ đọc công thức */
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Nunito', 'Comic Sans MS', sans-serif;
             background-color: var(--bg);
+            background-image: radial-gradient(#B3E5FC 2px, transparent 2px);
+            background-size: 30px 30px;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -29,15 +33,24 @@
         }
 
         header {
-            height: 50px;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 60px;
+            background: #FFFFFF;
+            box-shadow: 0 4px 15px rgba(3, 169, 244, 0.15);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
             z-index: 100;
             flex-shrink: 0;
+            border-bottom: 3px solid #81D4FA;
+        }
+
+        .header-title {
+            font-weight: 900; 
+            font-size: 24px; 
+            color: #0288D1; 
+            text-shadow: 2px 2px 0px #B3E5FC;
+            letter-spacing: 1px;
         }
 
         .main-container {
@@ -49,70 +62,71 @@
         /* Wall Area */
         .wall-area {
             flex: 3;
-            background-color: var(--wall-bg);
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 10px;
             position: relative;
-            border-right: 3px solid #cbd5e1;
-            box-shadow: inset -5px 0 15px rgba(0,0,0,0.02);
+            border-right: 4px dashed #4FC3F7;
         }
 
         .pyramid-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .brick-row {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
         }
 
-        /* Brick Styles (Beautiful 3D design) */
+        /* Brick Styles (Bánh quy hoạt hình) */
         .brick {
-            width: 155px;  /* Tăng chiều rộng để chứa công thức to hơn */
-            height: 100px;  /* Tăng chiều cao để công thức thoải mái */
+            width: 160px;  
+            height: 105px; 
             background: linear-gradient(135deg, var(--brick-light) 0%, var(--brick-main) 100%);
-            border: 2px solid var(--brick-border);
-            border-radius: 8px;
-            box-shadow: 0px 6px 0px var(--brick-shadow), 0px 8px 10px rgba(0,0,0,0.15);
+            border: 3px solid var(--brick-border);
+            border-radius: 20px; /* Bo tròn nhiều hơn */
+            box-shadow: 0px 6px 0px var(--brick-shadow), 0px 8px 15px rgba(0,0,0,0.1);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
-            padding-top: 24px; /* Đẩy nội dung xuống sâu hơn để tránh vòng tròn */
+            padding-top: 20px; 
             box-sizing: border-box;
             color: var(--brick-text);
         }
 
         .brick.empty {
-            background: rgba(255,255,255,0.4);
-            border: 2px dashed #94a3b8;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-            color: #64748b;
-            font-size: 13px;
-            font-weight: bold;
+            background: rgba(255, 255, 255, 0.5);
+            border: 3px dashed #81D4FA;
+            box-shadow: none;
+            color: #4FC3F7;
+            font-size: 16px;
+            font-weight: 900;
             padding-top: 0; 
-            border-radius: 8px;
+            border-radius: 20px;
         }
 
         .brick.empty.drag-over {
-            background: rgba(255, 140, 0, 0.15);
-            border-color: var(--primary);
-            transform: scale(1.03);
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+            background: #E1F5FE;
+            border-color: #03A9F4;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(3, 169, 244, 0.4);
         }
 
         .brick.top-brick {
-            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            border: 2px solid #cbd5e1;
-            box-shadow: 0px 6px 0px #94a3b8, 0px 8px 10px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #FFCDD2 0%, #EF5350 100%);
+            border: 3px solid #C62828;
+            box-shadow: 0px 6px 0px #B71C1C, 0px 8px 15px rgba(229, 57, 53, 0.3);
+            color: white;
             padding-top: 0; 
         }
 
@@ -125,41 +139,42 @@
         }
         
         .draggable-wall-brick:hover, .inv-brick:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0px 10px 0px var(--brick-shadow), 0px 15px 20px rgba(0,0,0,0.2);
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0px 10px 0px var(--brick-shadow), 0px 15px 20px rgba(0,0,0,0.15);
             z-index: 10;
         }
 
         .inv-brick:hover {
-            transform: translateY(-4px) scale(1.05); 
+            transform: translateY(-5px) scale(1.05); 
         }
 
+        /* Hình tròn nhỏ chứa nghiệm */
         .circle-label {
             position: absolute;
             top: -15px; 
-            left: -10px;
-            width: 36px;
-            height: 36px;
-            background: white;
-            border: 3px solid var(--brick-border);
+            left: -15px;
+            width: 40px;
+            height: 40px;
+            background: #FFFFFF;
+            border: 3px solid #03A9F4;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 15px;
-            color: var(--brick-shadow);
+            font-size: 16px;
+            color: #0288D1;
             z-index: 20;
-            box-shadow: 0px 4px 0px var(--brick-shadow), 0px 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0px 4px 0px #0288D1, 0px 2px 5px rgba(0,0,0,0.2);
         }
 
         .math-content {
             text-align: center;
-            font-size: 16px; /* Tăng cỡ chữ công thức toán học */
-            font-weight: 800;
+            font-size: 16px; 
+            font-weight: 900;
             padding: 0 5px;
             pointer-events: none;
-            line-height: 1.25;
+            line-height: 1.3;
             width: 100%;
             word-wrap: break-word;
         }
@@ -167,30 +182,29 @@
         /* Inventory Area */
         .inventory-area {
             flex: 2;
-            background: #ffffff;
+            background: #FFFFFF;
             display: flex;
             flex-direction: column;
-            box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.03);
         }
 
         .inv-header {
-            padding: 12px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-            font-weight: bold;
-            font-size: 14px;
-            color: #475569;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            padding: 15px;
+            background: #FFF3E0;
+            border-bottom: 3px solid #FFE0B2;
+            font-weight: 900;
+            font-size: 16px;
+            color: #E65100;
+            text-align: center;
             z-index: 5;
+            letter-spacing: 0.5px;
         }
 
         .inv-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
-            background-color: #fafafa;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 20px 20px;
+            padding: 20px;
+            background-color: #FAFAFA;
         }
 
         .pile {
@@ -198,63 +212,121 @@
             flex-wrap: wrap;       
             justify-content: center;
             gap: 20px;             
-            padding-top: 20px;
+            padding-top: 10px;
             padding-bottom: 40px;
         }
 
         .inv-brick {
-            width: 165px; /* Điều chỉnh viên gạch trong kho tương ứng */
-            height: 100px;
+            width: 160px; 
+            height: 105px;
             cursor: grab;
         }
 
-        /* UI */
+        /* UI Buttons & Stats */
         .stats {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         .score {
-            font-weight: bold;
-            color: var(--primary-dark);
-            background: #fffbeb;
-            padding: 4px 12px;
-            border-radius: 15px;
-            border: 2px solid #fde68a;
+            font-weight: 900;
+            color: #E65100;
+            background: #FFE0B2;
+            padding: 6px 15px;
+            border-radius: 20px;
+            border: 2px solid #FFB74D;
+            box-shadow: 0 3px 0 #FFA726;
         }
 
         .timer-box {
-            font-weight: bold;
-            color: #0284c7;
-            background: #f0f9ff;
-            padding: 4px 12px;
-            border-radius: 15px;
-            border: 2px solid #bae6fd;
+            font-weight: 900;
+            color: #0277BD;
+            background: #B3E5FC;
+            padding: 6px 15px;
+            border-radius: 20px;
+            border: 2px solid #81D4FA;
+            box-shadow: 0 3px 0 #4FC3F7;
         }
 
-        sub { font-size: 0.75em; vertical-align: sub; }
-        sup { font-size: 0.75em; vertical-align: super; }
+        .btn-music {
+            background: #AB47BC;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #7B1FA2;
+            transition: all 0.1s;
+        }
+        .btn-music:hover { background: #9C27B0; }
+        .btn-music:active { transform: translateY(4px); box-shadow: 0 0px 0px #7B1FA2; }
+        .btn-music.muted { background: #B0BEC5; box-shadow: 0 4px 0px #78909C; }
+
+        .btn-leaderboard {
+            background: #FFA000;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #FF8F00;
+            transition: all 0.1s;
+        }
+        .btn-leaderboard:hover { background: #FFB300; }
+        .btn-leaderboard:active { transform: translateY(4px); box-shadow: 0 0px 0px #FF8F00; }
+
+        .submit-btn-top {
+            background: #43A047;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #2E7D32;
+            transition: all 0.1s;
+        }
+        .submit-btn-top:hover { background: #4CAF50; }
+        .submit-btn-top:active { transform: translateY(4px); box-shadow: 0 0px 0px #2E7D32; }
+
+        .btn-reload {
+            cursor: pointer; 
+            background: #E0E0E0; 
+            border: none; 
+            color: #616161; 
+            font-weight: 900;
+            padding: 8px 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 0px #BDBDBD;
+        }
+        .btn-reload:active { transform: translateY(4px); box-shadow: 0 0px 0px #BDBDBD; }
+
+        sub { font-size: 0.7em; vertical-align: sub; }
+        sup { font-size: 0.7em; vertical-align: super; }
 
         /* General Modal/Overlay */
         .overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(2, 119, 189, 0.7);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(5px);
         }
         .modal {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
+            background: #FFFFFF;
+            padding: 35px;
+            border-radius: 25px;
             text-align: center;
-            max-width: 420px;
+            max-width: 450px;
             width: 90%;
-            border-bottom: 6px solid var(--primary);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 4px solid #4FC3F7;
+            box-shadow: 0 15px 0px #0288D1, 0 25px 40px rgba(0,0,0,0.3);
+            position: relative;
         }
         .hidden { display: none !important; }
 
@@ -262,7 +334,7 @@
         .dialog-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -278,272 +350,223 @@
         .dialog-box {
             background: white;
             padding: 25px;
-            border-radius: 16px;
+            border-radius: 20px;
             text-align: center;
-            max-width: 340px;
+            max-width: 350px;
             width: 90%;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 0px rgba(0,0,0,0.1);
             transform: scale(0.9);
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-top: 6px solid var(--primary);
+            border: 4px solid var(--primary);
         }
         .dialog-overlay.active .dialog-box {
             transform: scale(1);
         }
-        .dialog-icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-            line-height: 1;
-        }
-        .dialog-message {
-            font-size: 15px;
-            color: #334155;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        .dialog-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
+        .dialog-icon { font-size: 55px; margin-bottom: 10px; line-height: 1; }
+        .dialog-message { font-size: 16px; color: #374151; margin-bottom: 25px; line-height: 1.5; font-weight: 700; }
+        .dialog-buttons { display: flex; gap: 10px; justify-content: center; }
+        
         .btn-dialog {
             padding: 12px 20px;
-            border-radius: 10px;
+            border-radius: 15px;
             border: none;
-            font-weight: bold;
+            font-weight: 900;
             cursor: pointer;
             flex: 1;
-            font-size: 14px;
-            transition: background 0.2s, transform 0.1s;
+            font-size: 15px;
+            transition: all 0.1s;
         }
-        .btn-dialog:active {
-            transform: scale(0.95);
-        }
-        .btn-confirm-action { background: var(--primary); color: white; }
-        .btn-confirm-action:hover { background: var(--primary-dark); }
-        .btn-cancel-action { background: #e2e8f0; color: #475569; }
-        .btn-cancel-action:hover { background: #cbd5e1; }
+        .btn-dialog:active { transform: translateY(4px); }
+        .btn-confirm-action { background: var(--primary); color: white; box-shadow: 0 4px 0px var(--primary-dark); }
+        .btn-cancel-action { background: #E2E8F0; color: #475569; box-shadow: 0 4px 0px #CBD5E1; }
 
         /* Leaderboard Styles */
         .leaderboard-box {
             text-align: left;
-            max-height: 180px;
+            max-height: 200px;
             overflow-y: auto;
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border: 2px solid #e2e8f0;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 3px solid #BAE6FD;
         }
-        .lb-table {
-            width: 100%;
-            font-size: 14px;
-            border-collapse: collapse;
-        }
-        .lb-table td {
-            padding: 8px 6px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .input-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
+        .lb-table { width: 100%; font-size: 15px; border-collapse: collapse; font-weight: 700; }
+        .lb-table td { padding: 10px 6px; border-bottom: 2px dashed #BAE6FD; }
+        
+        .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
         .input-group input {
             flex: 1;
-            padding: 10px;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 12px;
+            border: 3px solid #81D4FA;
+            border-radius: 15px;
+            font-size: 15px;
+            font-weight: 700;
             outline: none;
+            font-family: inherit;
         }
-        .input-group input:focus {
-            border-color: var(--primary);
-        }
+        .input-group input:focus { border-color: #03A9F4; }
         .input-group button {
-            background: var(--primary);
+            background: #03A9F4;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            border-radius: 15px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: background 0.2s;
+            font-weight: 900;
+            font-size: 15px;
+            box-shadow: 0 4px 0px #0288D1;
+            font-family: inherit;
         }
-        .input-group button:hover {
-            background: var(--primary-dark);
-        }
+        .input-group button:active { transform: translateY(4px); box-shadow: 0 0px 0px #0288D1; }
 
-        .submit-btn-top {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 6px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 0px #047857;
-            transition: all 0.1s;
-        }
-        
-        .submit-btn-top:hover {
-            background: #059669;
-        }
-        
-        .submit-btn-top:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0px #047857;
-        }
-
-        .btn-leaderboard {
-            background: #f59e0b;
-            color: white;
-            border: none;
-            padding: 6px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 0px #b45309;
-            transition: all 0.1s;
-        }
-
-        .btn-leaderboard:hover {
-            background: #d97706;
-        }
-        
-        .btn-leaderboard:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0px #b45309;
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 800px) {
             .header-title { display: none; } 
-            .stats { gap: 8px; font-size: 12px; }
-            .btn-leaderboard, .submit-btn-top { padding: 6px 10px; font-size: 12px; }
+            .stats { gap: 8px; font-size: 13px; }
+            .btn-leaderboard, .submit-btn-top, .btn-music, .btn-reload { padding: 8px 10px; font-size: 13px; }
         }
 
         @media (max-width: 600px) {
             .main-container { flex-direction: column; }
-            .brick { width: 115px; height: 80px; padding-top: 18px; border-width: 1px; box-shadow: 0px 4px 0px var(--brick-shadow); }
-            .circle-label { width: 28px; height: 28px; font-size: 12px; top: -12px; left: -8px; border-width: 2px; box-shadow: 0px 2px 0px var(--brick-shadow); }
+            .brick { width: 120px; height: 85px; padding-top: 15px; border-width: 2px; }
+            .circle-label { width: 32px; height: 32px; font-size: 13px; top: -12px; left: -10px; border-width: 2px; }
             .math-content { font-size: 13px; }
-            .inv-brick { width: 120px; height: 85px; }
+            .inv-brick { width: 125px; height: 90px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-title" style="font-weight: 900; font-size: 20px; color: var(--primary); text-shadow: 1px 1px 0px rgba(0,0,0,0.1);">XÂY TƯỜNG THÀNH</div>
+        <div class="header-title">✨ XÂY TƯỜNG THÀNH ✨</div>
         <div class="stats">
+            <button id="music-btn" class="btn-music" onclick="toggleMusic()">🎵 Nhạc: Bật</button>
             <div class="timer-box">⏱ <span id="timer">00:00</span></div>
-            <div class="score">ĐIỂM: <span id="score">0</span></div>
+            <div class="score">⭐ ĐIỂM: <span id="score">0</span></div>
             <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 Top 10</button>
             <button class="submit-btn-top" onclick="submitGame(false)">Nộp bài</button>
-            <button onclick="replayGame()" style="cursor:pointer; background:none; border:none; color:#64748b; font-weight:bold;">Tải lại</button>
+            <button class="btn-reload" onclick="replayGame()">🔄 Tải lại</button>
         </div>
     </header>
 
     <div class="main-container">
-        <!-- Vùng Tường -->
         <div class="wall-area">
-            <div class="wall-label" style="position: absolute; top: 15px; left: 15px; color: #94a3b8; font-weight: bold; font-size: 12px;">THÁP TOÁN HỌC</div>
+            <div class="wall-label" style="position: absolute; top: 15px; left: 15px; color: #0288D1; font-weight: 900; font-size: 14px; background: #E1F5FE; padding: 5px 15px; border-radius: 20px; border: 2px dashed #4FC3F7;">🏰 THÁP TOÁN HỌC</div>
             <div class="pyramid-container" id="pyramid"></div>
         </div>
 
-        <!-- Vùng Kho Gạch -->
         <div class="inventory-area" ondragover="event.preventDefault()" ondrop="handleInventoryDrop(event)">
-            <div class="inv-header">KHO GẠCH (Kéo thả tự do)</div>
+            <div class="inv-header">🎒 KHO GẠCH (Kéo thả tự do)</div>
             <div class="inv-scroll">
                 <div class="pile" id="inventory"></div>
             </div>
         </div>
     </div>
 
-    <!-- Màn hình Bắt Đầu -->
     <div id="start-screen" class="overlay">
         <div class="modal">
-            <h3 style="margin-top: 0; font-size: 22px; color: #1e293b;">HƯỚNG DẪN</h3>
-            <p style="font-size: 15px; color: #475569; line-height: 1.5;">Kéo gạch vào ô trống sao cho số trên gạch là <b>nghiệm</b> của phương trình ở hàng trên.</p>
-            <div style="background: #f0f9ff; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #bae6fd;">
-                <p style="font-size: 13px; color: #0284c7; margin: 0;">Mẹo: Có thể đổi vị trí gạch trên tường hoặc kéo thả về kho gạch.</p>
+            <h3 style="margin-top: 0; font-size: 26px; color: #0288D1; text-shadow: 1px 1px 0 #B3E5FC;">🎮 HƯỚNG DẪN 🎮</h3>
+            <p style="font-size: 16px; color: #374151; line-height: 1.5; font-weight: 700;">Kéo gạch vào ô trống sao cho số trên gạch là <b>nghiệm</b> của phương trình ở hàng trên.</p>
+            <div style="background: #E1F5FE; padding: 12px; border-radius: 15px; margin-bottom: 12px; border: 2px solid #81D4FA;">
+                <p style="font-size: 14px; color: #0277BD; margin: 0; font-weight: 700;">💡 Mẹo: Có thể đổi vị trí gạch trên tường hoặc kéo thả về kho gạch.</p>
             </div>
-            <div style="background: #fef2f2; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #fecaca;">
-                <p style="font-size: 13px; color: #dc2626; margin: 0; font-weight: bold;">Lưu ý: Phải xây từ trên xuống dưới! Kéo sai trừ 5 điểm.</p>
+            <div style="background: #FFEBEE; padding: 12px; border-radius: 15px; margin-bottom: 25px; border: 2px solid #EF9A9A;">
+                <p style="font-size: 14px; color: #C62828; margin: 0; font-weight: 900;">⚠️ Lưu ý: Phải xây từ trên xuống dưới! Kéo sai trừ 5 điểm.</p>
             </div>
-            <button onclick="startGame()" style="background:var(--primary); color:white; border:none; padding:15px 30px; font-weight:bold; cursor:pointer; border-radius:10px; width:100%; font-size: 16px; box-shadow: 0 5px 0 var(--brick-shadow); transition: all 0.1s;" onactive="this.style.transform='translateY(5px)'; this.style.boxShadow='0 0 0 var(--brick-shadow)';">BẮT ĐẦU NGAY</button>
+            <button onclick="startGame()" style="background:#FF9800; color:white; border:none; padding:18px 30px; font-weight:900; cursor:pointer; border-radius:20px; width:100%; font-size: 18px; box-shadow: 0 6px 0 #E65100; font-family: inherit; transition: all 0.1s;" onmousedown="this.style.transform='translateY(6px)'; this.style.boxShadow='0 0 0 #E65100';" onmouseup="this.style.transform='none'; this.style.boxShadow='0 6px 0 #E65100';">🚀 BẮT ĐẦU NGAY!</button>
         </div>
     </div>
 
-    <!-- Màn hình Kết Thúc / Nộp Bài -->
     <div id="win-screen" class="overlay hidden">
         <div class="modal">
-            <h2 id="win-title" style="color: #10b981; margin: 0 0 10px 0; font-size: 28px;">XUẤT SẮC!</h2>
-            <p style="margin: 0 0 5px 0; font-size: 16px; color: #475569;">Bạn đạt được: <b id="final-score" style="color: var(--primary); font-size: 24px;">0</b> điểm</p>
-            <p style="margin: 0 0 20px 0; font-size: 16px; color: #475569;">Thời gian làm bài: <b id="final-time" style="color: #0284c7; font-size: 20px;">00:00</b></p>
+            <h2 id="win-title" style="color: #4CAF50; margin: 0 0 10px 0; font-size: 32px; text-shadow: 2px 2px 0 #C8E6C9;">🎉 XUẤT SẮC! 🎉</h2>
+            <p style="margin: 0 0 5px 0; font-size: 18px; color: #475569; font-weight: 700;">Bạn đạt được: <b id="final-score" style="color: #E65100; font-size: 28px;">0</b> điểm</p>
+            <p style="margin: 0 0 20px 0; font-size: 16px; color: #475569; font-weight: 700;">Thời gian: <b id="final-time" style="color: #0288D1; font-size: 22px;">00:00</b></p>
             
             <div id="save-area" class="input-group">
-                <input type="text" id="player-name" placeholder="Nhập tên của bạn">
-                <button id="submit-btn" onclick="saveScore()">Lưu Online</button>
+                <input type="text" id="player-name" placeholder="✍️ Nhập tên của bạn">
+                <button id="submit-btn" onclick="saveScore()">Lưu Điểm</button>
             </div>
 
             <div class="leaderboard-box">
-                <div style="font-weight: bold; margin-bottom: 8px; color: #64748b;">Bảng Xếp Hạng</div>
+                <div style="font-weight: 900; margin-bottom: 10px; color: #0288D1;">🌟 Bảng Xếp Hạng</div>
                 <table class="lb-table" id="lb-table"></table>
             </div>
 
-            <button onclick="replayGame()" style="background:#1e293b; color:white; border:none; padding:12px 25px; cursor:pointer; border-radius:8px; width: 100%; font-size: 15px; font-weight: bold; transition: background 0.2s;">CHƠI LẠI TỪ ĐẦU</button>
+            <button onclick="replayGame()" style="background:#03A9F4; color:white; border:none; padding:15px 25px; cursor:pointer; border-radius:15px; width: 100%; font-size: 16px; font-weight: 900; box-shadow: 0 5px 0 #0288D1; font-family: inherit;" onmousedown="this.style.transform='translateY(5px)'; this.style.boxShadow='0 0 0 #0288D1';" onmouseup="this.style.transform='none'; this.style.boxShadow='0 5px 0 #0288D1';">🔄 CHƠI LẠI TỪ ĐẦU</button>
         </div>
     </div>
 
-    <!-- Màn hình Bảng Xếp Hạng Độc Lập -->
     <div id="leaderboard-screen" class="overlay hidden">
         <div class="modal">
-            <h2 style="color: #d97706; margin: 0 0 15px 0; font-size: 24px;">🏆 TOP 10 CAO THỦ</h2>
+            <h2 style="color: #FF9800; margin: 0 0 15px 0; font-size: 28px; text-shadow: 2px 2px 0 #FFE0B2;">🏆 TOP 10 CAO THỦ</h2>
             <div class="leaderboard-box" style="max-height: 300px;">
                 <table class="lb-table" id="main-lb-table"></table>
             </div>
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="clearLeaderboard()" style="background:#ef4444; color:white; border:none; padding:12px; cursor:pointer; border-radius:8px; font-weight: bold; flex: 1; font-size: 13px; transition: background 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">XÓA DỮ LIỆU</button>
-                <button onclick="closeLeaderboard()" style="background:#1e293b; color:white; border:none; padding:12px; cursor:pointer; border-radius:8px; font-weight: bold; flex: 2; font-size: 15px;">ĐÓNG</button>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="clearLeaderboard()" style="background:#EF5350; color:white; border:none; padding:15px; cursor:pointer; border-radius:15px; font-weight: 900; flex: 1; font-size: 14px; box-shadow: 0 4px 0 #C62828; font-family: inherit;">🗑 XÓA</button>
+                <button onclick="closeLeaderboard()" style="background:#B0BEC5; color:#374151; border:none; padding:15px; cursor:pointer; border-radius:15px; font-weight: 900; flex: 2; font-size: 16px; box-shadow: 0 4px 0 #78909C; font-family: inherit;">❌ ĐÓNG</button>
             </div>
         </div>
     </div>
 
-    <!-- Hộp thoại Alert Tuỳ Chỉnh -->
     <div id="custom-alert" class="dialog-overlay">
         <div class="dialog-box">
             <div class="dialog-icon" id="alert-icon">⚠️</div>
             <div class="dialog-message" id="alert-message">Nội dung thông báo</div>
             <div class="dialog-buttons">
-                <button class="btn-dialog btn-confirm-action" onclick="closeAlert()">Đã hiểu</button>
+                <button class="btn-dialog btn-confirm-action" onclick="closeAlert()" style="font-family: inherit;">Đã hiểu!</button>
             </div>
         </div>
     </div>
 
-    <!-- Hộp thoại Confirm Tuỳ Chỉnh -->
     <div id="custom-confirm" class="dialog-overlay">
-        <div class="dialog-box" style="border-top-color: #3b82f6;">
-            <div class="dialog-icon">❓</div>
+        <div class="dialog-box" style="border-color: #03A9F4;">
+            <div class="dialog-icon">🤔</div>
             <div class="dialog-message" id="confirm-message">Nội dung xác nhận</div>
             <div class="dialog-buttons">
-                <button class="btn-dialog btn-cancel-action" onclick="closeConfirm(false)">Hủy</button>
-                <button class="btn-dialog btn-confirm-action" style="background:#3b82f6;" onclick="closeConfirm(true)">Đồng ý</button>
+                <button class="btn-dialog btn-cancel-action" onclick="closeConfirm(false)" style="font-family: inherit;">Hủy</button>
+                <button class="btn-dialog btn-confirm-action" style="background:#03A9F4; box-shadow: 0 4px 0 #0288D1; font-family: inherit;" onclick="closeConfirm(true)">Đồng ý</button>
             </div>
         </div>
     </div>
 
     <script>
+        // --- CẤU HÌNH ÂM THANH ---
+        const sfxCorrect = new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg');
+        const sfxWrong = new Audio('https://actions.google.com/sounds/v1/cartoon/slip_and_fall.ogg');
+        const sfxWin = new Audio('https://actions.google.com/sounds/v1/cartoon/ta_da.ogg');
+        
+        // NHẠC NỀN THEO YÊU CẦU: Gắn với file mp3 cô tải lên
+        const bgMusic = new Audio('tuongthanh.mp3'); 
+        bgMusic.loop = true;
+        bgMusic.volume = 0.4; 
+
+        let isMusicPlaying = true;
+
+        function toggleMusic() {
+            const btn = document.getElementById('music-btn');
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                btn.innerText = '🔇 Nhạc: Tắt';
+                btn.classList.add('muted');
+            } else {
+                bgMusic.play().catch(() => {});
+                btn.innerText = '🎵 Nhạc: Bật';
+                btn.classList.remove('muted');
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
         // --- LOGIC HỘP THOẠI TÙY CHỈNH ---
         let pendingConfirmCallback = null;
 
         function customAlert(message, type = 'warning') {
-            const icons = { warning: '⚠️', error: '❌', success: '✅', info: 'ℹ️' };
-            const colors = { warning: '#f59e0b', error: '#ef4444', success: '#10b981', info: '#3b82f6' };
+            const icons = { warning: '🙀', error: '💥', success: '🌟', info: '💡' };
+            const colors = { warning: '#FF9800', error: '#F44336', success: '#4CAF50', info: '#03A9F4' };
             
-            document.getElementById('alert-icon').innerText = icons[type] || '⚠️';
-            document.getElementById('custom-alert').querySelector('.dialog-box').style.borderTopColor = colors[type] || '#f59e0b';
+            document.getElementById('alert-icon').innerText = icons[type] || '🙀';
+            document.getElementById('custom-alert').querySelector('.dialog-box').style.borderColor = colors[type] || '#FF9800';
             document.getElementById('alert-message').innerHTML = message;
             document.getElementById('custom-alert').classList.add('active');
         }
@@ -566,7 +589,7 @@
             pendingConfirmCallback = null;
         }
 
-        // --- GAME LOGIC ---
+        // --- GAME LOGIC (Giữ nguyên 100% công thức Toán) ---
         const DATA = [
             { id: 0, circle: null, math: 'log<sub>9</sub>[(2x-1)<sup>2</sup>] = 2' },
             { id: 1, circle: "5", math: 'log<sub>3</sub>(x<sup>2</sup>+x+3) = 1' },
@@ -622,6 +645,9 @@
         function startGame() {
             document.getElementById('start-screen').classList.add('hidden');
             startTimer();
+            if (isMusicPlaying) {
+                bgMusic.play().catch(e => console.log("Trình duyệt yêu cầu tương tác thêm để phát nhạc"));
+            }
         }
 
         function replayGame() {
@@ -713,13 +739,13 @@
                                 const hasChildRight = r + 1 < state.length && state[r+1][c+1] && state[r+1][c+1].isFilled;
                                 if (hasChildLeft || hasChildRight) {
                                     e.preventDefault();
-                                    customAlert("Không thể di chuyển!<br>Đang có viên gạch khác xây đè lên nó.", "warning");
+                                    customAlert("Không thể di chuyển!<br>Đang có viên gạch khác đè lên rùi.", "warning");
                                     return;
                                 }
                                 
                                 draggedId = slot.content.id;
                                 draggedFromSlot = { r, c };
-                                setTimeout(() => el.style.opacity = '0.4', 0);
+                                setTimeout(() => el.style.opacity = '0.5', 0);
                             };
                             el.ondragend = () => el.style.opacity = '1';
                         }
@@ -749,7 +775,7 @@
                 el.ondragstart = () => { 
                     draggedId = brick.id; 
                     draggedFromSlot = null;
-                    setTimeout(() => el.style.opacity = '0.4', 0); 
+                    setTimeout(() => el.style.opacity = '0.5', 0); 
                 };
                 el.ondragend = () => el.style.opacity = '1';
                 inv.appendChild(el);
@@ -776,7 +802,7 @@
             let pRightFilled = parentRight ? parentRight.isFilled : false;
 
             if ((parentLeft && !pLeftFilled) || (parentRight && !pRightFilled)) {
-                customAlert("Bạn phải xây từ hàng trên xuống trước!", "warning");
+                customAlert("Oops! Em phải xây từ hàng trên xuống trước nhé!", "warning");
                 return;
             }
 
@@ -796,6 +822,10 @@
             }
 
             if (valid) {
+                // Phát âm thanh kéo đúng
+                sfxCorrect.currentTime = 0;
+                sfxCorrect.play().catch(e => {});
+
                 if (draggedFromSlot) {
                     state[draggedFromSlot.r][draggedFromSlot.c].isFilled = false;
                     state[draggedFromSlot.r][draggedFromSlot.c].content = null;
@@ -814,9 +844,13 @@
                 
                 setTimeout(checkAutoSubmit, 100); 
             } else {
+                // Phát âm thanh kéo sai
+                sfxWrong.currentTime = 0;
+                sfxWrong.play().catch(e => {});
+
                 score = Math.max(0, score - 5);
                 document.getElementById('score').innerText = score;
-                customAlert("Sai rồi!<br>Số này không phải là nghiệm của viên gạch phía trên.<br><br><b style='color:#ef4444;'>(Bị trừ 5 điểm)</b>", "error");
+                customAlert("Sai rồi!<br>Số này không phải là nghiệm của viên gạch phía trên.<br><br><b style='color:#F44336;'>(Bị trừ 5 điểm)</b>", "error");
             }
         }
 
@@ -825,7 +859,7 @@
             
             if (!allFilled && !isAuto) {
                 customConfirm(
-                    "Bạn chưa hoàn thành bức tường!<br>Điểm hiện tại của bạn là <b style='color:var(--primary);font-size:18px;'>" + score + "</b>.<br><br>Bạn có chắc chắn muốn nộp bài sớm không?", 
+                    "Em chưa hoàn thành bức tường!<br>Điểm hiện tại là <b style='color:#E65100;font-size:20px;'>" + score + "</b>.<br><br>Em có chắc chắn muốn nộp bài sớm không?", 
                     () => processSubmission(allFilled)
                 );
             } else {
@@ -835,6 +869,8 @@
 
         function processSubmission(allFilled) {
             stopTimer(); 
+            bgMusic.pause();
+
             document.getElementById('final-score').innerText = score;
             
             const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
@@ -843,18 +879,21 @@
 
             document.getElementById('player-name').value = '';
             document.getElementById('save-area').style.display = 'flex';
-            document.getElementById('submit-btn').innerText = 'Lưu Online';
+            document.getElementById('submit-btn').innerText = 'Lưu Điểm';
             document.getElementById('submit-btn').disabled = false;
 
             renderLeaderboard();
             
             const winTitle = document.getElementById('win-title');
             if (allFilled) {
-                winTitle.innerText = "XUẤT SẮC!";
-                winTitle.style.color = "#10b981";
+                sfxWin.currentTime = 0;
+                sfxWin.play().catch(e => {});
+
+                winTitle.innerText = "🎉 XUẤT SẮC! 🎉";
+                winTitle.style.color = "#4CAF50";
             } else {
-                winTitle.innerText = "ĐÃ NỘP BÀI SỚM";
-                winTitle.style.color = "#f59e0b";
+                winTitle.innerText = "⭐ ĐÃ NỘP BÀI SỚM ⭐";
+                winTitle.style.color = "#FF9800";
             }
 
             document.getElementById('win-screen').classList.remove('hidden');
@@ -898,15 +937,15 @@
         function populateTable(table, list) {
             table.innerHTML = '';
             if (list.length === 0) {
-                table.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#94a3b8; padding: 15px;">Chưa có người chơi nào</td></tr>';
+                table.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#9CA3AF; padding: 15px;">Chưa có cao thủ nào!</td></tr>';
                 return;
             }
             list.forEach((item, idx) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>#${idx + 1} <b>${item.name}</b></td>
-                    <td style="text-align:center; color:#0284c7; font-size:13px;">⏱ ${item.time || '--:--'}</td>
-                    <td style="text-align:right; color:var(--primary-dark); font-weight:bold; font-size:15px;">${item.score} đ</td>
+                    <td>#${idx + 1} <b style="color: #1F2937;">${item.name}</b></td>
+                    <td style="text-align:center; color:#0288D1;">⏱ ${item.time || '--:--'}</td>
+                    <td style="text-align:right; color:#E65100; font-weight:900;">${item.score} đ</td>
                 `;
                 table.appendChild(tr);
             });
@@ -922,7 +961,7 @@
         }
 
         function clearLeaderboard() {
-            customConfirm("Bạn có chắc chắn muốn xóa toàn bộ bảng xếp hạng lưu trên máy này không?", () => {
+            customConfirm("Chắc chắn muốn xóa toàn bộ bảng xếp hạng lưu trên máy này không?", () => {
                 localStorage.removeItem('wall_game_lb');
                 renderLeaderboard();
                 customAlert("Đã xóa dữ liệu thành công!", "success");
@@ -932,12 +971,12 @@
         async function saveScore() {
             const name = document.getElementById('player-name').value.trim();
             if (!name) {
-                customAlert("Vui lòng nhập tên của bạn!", "warning");
+                customAlert("Vui lòng nhập tên của em nhé!", "warning");
                 return;
             }
 
             const submitBtn = document.getElementById('submit-btn');
-            submitBtn.innerText = 'Đang gửi...';
+            submitBtn.innerText = '⏳ Đang gửi...';
             submitBtn.disabled = true;
 
             const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
