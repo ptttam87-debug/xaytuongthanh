@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xây Tường Thành - Phong Cách Hoạt Hình</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/drag-drop-touch"></script>
     <style>
         :root {
             --primary: #E53935; 
@@ -24,10 +25,10 @@
             background-color: var(--bg);
             background-image: radial-gradient(#B3E5FC 2px, transparent 2px);
             background-size: 30px 30px;
-            height: 100vh; /* Sẽ tự động chuyển thành auto trên điện thoại */
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Sẽ tự động mở khóa trên điện thoại */
+            overflow: hidden;
             user-select: none;
         }
 
@@ -60,6 +61,7 @@
 
         .wall-area {
             flex: 3;
+            min-height: 0;
             background-color: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(5px);
             display: flex;
@@ -113,6 +115,11 @@
         @keyframes pulse {
             0% { box-shadow: 0 0 15px rgba(76, 175, 80, 0.5); transform: scale(1.05); }
             100% { box-shadow: 0 0 25px rgba(76, 175, 80, 1); transform: scale(1.1); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(3px); }
         }
 
         .brick.empty {
@@ -184,6 +191,7 @@
 
         .inventory-area {
             flex: 2;
+            min-height: 0;
             background: #FFFFFF;
             display: flex;
             flex-direction: column;
@@ -192,7 +200,7 @@
         }
 
         .inv-header {
-            padding: 15px;
+            padding: 10px;
             background: #FFF3E0;
             border-bottom: 3px solid #FFE0B2;
             font-weight: 900;
@@ -200,8 +208,15 @@
             color: #E65100;
             text-align: center;
             z-index: 5;
-            letter-spacing: 0.5px;
             pointer-events: none;
+        }
+
+        .scroll-hint {
+            font-size: 12px; 
+            color: #0288D1; 
+            margin-top: 4px; 
+            font-weight: bold; 
+            animation: bounce 1.5s infinite;
         }
 
         .inv-scroll {
@@ -209,7 +224,13 @@
             overflow-y: auto;
             padding: 20px;
             background-color: #FAFAFA;
+            -webkit-overflow-scrolling: touch; 
         }
+
+        .inv-scroll::-webkit-scrollbar { width: 10px; }
+        .inv-scroll::-webkit-scrollbar-track { background: #E1F5FE; border-radius: 10px; }
+        .inv-scroll::-webkit-scrollbar-thumb { background: #03A9F4; border-radius: 10px; }
+        .inv-scroll::-webkit-scrollbar-thumb:hover { background: #0288D1; }
 
         .pile {
             display: flex;
@@ -217,7 +238,7 @@
             justify-content: center;
             gap: 20px;             
             padding-top: 10px;
-            padding-bottom: 40px;
+            padding-bottom: 60px;
         }
 
         .inv-brick {
@@ -317,54 +338,17 @@
         .input-group button { background: #03A9F4; color: white; border: none; padding: 12px 20px; border-radius: 15px; cursor: pointer; font-weight: 900; font-size: 15px; box-shadow: 0 4px 0px #0288D1; font-family: inherit; }
         .input-group button:active { transform: translateY(4px); box-shadow: 0 0px 0px #0288D1; }
 
-        /* ========================================================
-           GIẢI PHÁP TỐI ƯU CẢM ỨNG & XOAY NGANG CHO ĐIỆN THOẠI 
-           ======================================================== */
         @media (max-width: 950px), (max-height: 600px) {
-            body {
-                height: auto; 
-                overflow: auto; /* Mở khóa cuộn toàn bộ trang */
-                display: block; /* Hủy flexbox bó hẹp */
-                -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iPhone */
-            }
-            
-            header {
-                position: sticky; /* Trôi theo màn hình */
-                top: 0;
-            }
-
-            .main-container { 
-                display: flex;
-                flex-direction: column; 
-                height: auto; 
-                overflow: visible; 
-            }
-
-            .wall-area { 
-                flex: none; 
-                min-height: 480px; /* Cố định khoảng không gian cho tường */
-                border-right: none; 
-                border-bottom: 4px dashed #4FC3F7; 
-                padding: 30px 10px;
-            }
-
-            .inventory-area { 
-                flex: none; 
-                height: auto; 
-                overflow: visible; 
-            }
-
-            .inv-scroll { 
-                overflow: visible; /* Để trang web tự lo việc cuộn */
-                padding-bottom: 60px; /* Thêm khoảng trống dưới cùng */
-            }
-            
-            /* Tinh chỉnh size gạch để vừa vặn hơn khi cuộn */
+            body { height: auto; overflow: auto; display: block; -webkit-overflow-scrolling: touch; }
+            header { position: sticky; top: 0; }
+            .main-container { display: flex; flex-direction: column; height: auto; overflow: visible; }
+            .wall-area { flex: none; min-height: 480px; border-right: none; border-bottom: 4px dashed #4FC3F7; padding: 30px 10px; }
+            .inventory-area { flex: none; height: auto; overflow: visible; }
+            .inv-scroll { overflow: visible; padding-bottom: 60px; }
             .brick { width: 130px; height: 90px; padding-top: 15px; border-width: 2px; }
             .circle-label { width: 32px; height: 32px; font-size: 13px; top: -12px; left: -10px; border-width: 2px; }
             .math-content { font-size: 13px; }
             .inv-brick { width: 135px; height: 95px; }
-            
             .header-title { display: none; } 
             .stats { gap: 8px; font-size: 13px; width: 100%; justify-content: space-between;}
             .btn-leaderboard, .submit-btn-top, .btn-music, .btn-reload { padding: 8px 10px; font-size: 12px; flex: 1; margin: 0 2px;}
@@ -401,6 +385,7 @@
         <div class="inventory-area" id="inventory-area" ondragover="event.preventDefault()" ondrop="handleInventoryDrop(event)" onclick="handleInventoryAreaClick()">
             <div class="inv-header">
                 🎒 KHO GẠCH (Chạm để Xây)
+                <div class="scroll-hint">⬇️ Vuốt lên/xuống để xem thêm gạch ⬇️</div>
             </div>
             <div class="inv-scroll">
                 <div class="pile" id="inventory"></div>
@@ -413,7 +398,7 @@
             <h3 style="margin-top: 0; font-size: 26px; color: #0288D1; text-shadow: 1px 1px 0 #B3E5FC;">🎮 HƯỚNG DẪN 🎮</h3>
             <p style="font-size: 16px; color: #374151; line-height: 1.5; font-weight: 700;">Chạm vào gạch sao cho số trên gạch là <b>nghiệm</b> của phương trình ở hàng trên.</p>
             <div style="background: #E1F5FE; padding: 12px; border-radius: 15px; margin-bottom: 12px; border: 2px solid #81D4FA;">
-                <p style="font-size: 14px; color: #0277BD; margin: 0; font-weight: 700;">💡 Dùng điện thoại: <b>Vuốt lên/xuống để xem thêm gạch</b>, <b>Chạm gạch</b> (gạch sẽ sáng lên), sau đó <b>chạm ô trống</b> để xây.</p>
+                <p style="font-size: 14px; color: #0277BD; margin: 0; font-weight: 700;">💡 Dùng điện thoại: <b>Vuốt màn hình để tìm gạch</b>, <b>Chạm gạch</b> (gạch sẽ sáng lên), sau đó <b>chạm ô trống</b> để xây.</p>
             </div>
             <div style="background: #FFEBEE; padding: 12px; border-radius: 15px; margin-bottom: 25px; border: 2px solid #EF9A9A;">
                 <p style="font-size: 14px; color: #C62828; margin: 0; font-weight: 900;">⚠️ Lưu ý: Phải xây từ trên xuống dưới! Sai trừ 5 điểm.</p>
@@ -435,7 +420,7 @@
 
             <div class="leaderboard-box">
                 <div style="font-weight: 900; margin-bottom: 10px; color: #0288D1;">🌟 Bảng Xếp Hạng</div>
-                <div id="lb-loading" style="display:none; text-align:center; color:#03A9F4; font-size:14px; font-weight:bold;">Đang tải điểm từ hệ thống...</div>
+                <div id="lb-loading" style="display:none; text-align:center; color:#03A9F4; font-size:14px; font-weight:bold;">Đang kết nối hệ thống...</div>
                 <table class="lb-table" id="lb-table"></table>
             </div>
 
@@ -447,7 +432,7 @@
         <div class="modal">
             <h2 style="color: #FF9800; margin: 0 0 15px 0; font-size: 28px; text-shadow: 2px 2px 0 #FFE0B2;">🏆 TOP 10 CAO THỦ</h2>
             <div class="leaderboard-box" style="max-height: 300px;">
-                <div id="main-lb-loading" style="display:none; text-align:center; color:#FF9800; font-size:14px; font-weight:bold;">Đang tải điểm từ hệ thống...</div>
+                <div id="main-lb-loading" style="display:none; text-align:center; color:#FF9800; font-size:14px; font-weight:bold;">Đang kết nối hệ thống...</div>
                 <table class="lb-table" id="main-lb-table"></table>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -477,11 +462,26 @@
         </div>
     </div>
 
-    <script>
-        // ======= LINK GOOGLE SCRIPT GỐC =======
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznnoN5exSDKuMMVH2rDniJyMg5rqBN998Dwm4J9uLenIJQmherGvQYfqQ4tzoejlQH/exec';
-        // ======================================
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
+        // CẤU HÌNH FIREBASE CỦA CÔ TÂM
+        const firebaseConfig = {
+            apiKey: "AIzaSyCvhFO4AcZrnMeV_f5TtXMcuFQo2YTiUgg",
+            authDomain: "xaytuongthanh.firebaseapp.com",
+            databaseURL: "https://xaytuongthanh-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "xaytuongthanh",
+            storageBucket: "xaytuongthanh.firebasestorage.app",
+            messagingSenderId: "1088191346063",
+            appId: "1:1088191346063:web:f0ff6b0d899df192f347fa",
+            measurementId: "G-QTG5G5JTF1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Âm thanh
         const sfxCorrect = new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg');
         const sfxWrong = new Audio('https://actions.google.com/sounds/v1/cartoon/slip_and_fall.ogg');
         const sfxWin = new Audio('https://actions.google.com/sounds/v1/cartoon/ta_da.ogg');
@@ -543,11 +543,39 @@
 
         let score = 0, state = [], invData = [], draggedId = null, draggedFromSlot = null, solutionMap = {}; 
         let startTime, timerInterval, timeElapsed = 0;
-        
-        let selectedBrickId = null;
-        let selectedFromSlot = null;
+        let selectedBrickId = null, selectedFromSlot = null;
 
-        window.onload = function() { setupGameData(); loadOnlineLeaderboard(); };
+        // TẢI DỮ LIỆU TỪ FIREBASE TỰ ĐỘNG (REAL-TIME)
+        window.onload = function() { 
+            setupGameData(); 
+            
+            document.getElementById('lb-loading').style.display = 'block';
+            document.getElementById('main-lb-loading').style.display = 'block';
+
+            const dbRef = ref(db, 'leaderboard');
+            onValue(dbRef, (snapshot) => {
+                document.getElementById('lb-loading').style.display = 'none';
+                document.getElementById('main-lb-loading').style.display = 'none';
+
+                const data = snapshot.val();
+                let list = [];
+                if (data) {
+                    for (let key in data) {
+                        list.push(data[key]);
+                    }
+                }
+
+                // Sắp xếp: Điểm cao -> Thời gian ngắn
+                list.sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return (a.timeSec || 99999) - (b.timeSec || 99999);
+                });
+
+                globalLeaderboardData = list.slice(0, 10);
+                updateTableUI('lb-table', globalLeaderboardData);
+                updateTableUI('main-lb-table', globalLeaderboardData);
+            });
+        };
 
         function startTimer() {
             clearInterval(timerInterval); startTime = Date.now(); timeElapsed = 0;
@@ -617,11 +645,9 @@
 
         function selectBrick(id, r, c) {
             if (selectedBrickId === id) {
-                selectedBrickId = null;
-                selectedFromSlot = null;
+                selectedBrickId = null; selectedFromSlot = null;
             } else {
-                selectedBrickId = id;
-                selectedFromSlot = (r !== null && c !== null) ? {r, c} : null;
+                selectedBrickId = id; selectedFromSlot = (r !== null && c !== null) ? {r, c} : null;
             }
             render();
         }
@@ -631,8 +657,7 @@
                 draggedId = selectedBrickId;
                 draggedFromSlot = selectedFromSlot;
                 handleDrop(r, c); 
-                selectedBrickId = null;
-                selectedFromSlot = null;
+                selectedBrickId = null; selectedFromSlot = null;
                 render();
             }
         }
@@ -643,8 +668,7 @@
                 draggedId = selectedBrickId;
                 draggedFromSlot = selectedFromSlot;
                 handleInventoryDrop(fakeEvent);
-                selectedBrickId = null;
-                selectedFromSlot = null;
+                selectedBrickId = null; selectedFromSlot = null;
                 render();
             }
         }
@@ -658,10 +682,7 @@
                     if (slot.isFilled) {
                         el.className = 'brick' + (r === 0 ? ' top-brick' : ' draggable-wall-brick');
                         
-                        if (slot.content.id === selectedBrickId) {
-                            el.classList.add('selected-brick');
-                        }
-
+                        if (slot.content.id === selectedBrickId) el.classList.add('selected-brick');
                         el.innerHTML = `${slot.content.circle ? `<div class="circle-label">${slot.content.circle}</div>` : ''}<div class="math-content">${slot.content.math}</div>`;
                         
                         if (r > 0) {
@@ -690,10 +711,7 @@
                         el.ondragleave = () => el.classList.remove('drag-over');
                         el.ondrop = () => handleDrop(r, c);
                         
-                        el.onclick = (e) => {
-                            e.stopPropagation();
-                            handleTapDrop(r, c);
-                        };
+                        el.onclick = (e) => { e.stopPropagation(); handleTapDrop(r, c); };
                     }
                     rowEl.appendChild(el);
                 });
@@ -704,19 +722,12 @@
             invData.filter(b => !b.placed).forEach((brick) => {
                 const el = document.createElement('div'); el.className = 'brick inv-brick'; el.draggable = true;
                 
-                if (brick.id === selectedBrickId) {
-                    el.classList.add('selected-brick');
-                }
-
+                if (brick.id === selectedBrickId) el.classList.add('selected-brick');
                 el.innerHTML = `<div class="circle-label">${brick.circle}</div><div class="math-content">${brick.math}</div>`;
                 
                 el.ondragstart = () => { draggedId = brick.id; draggedFromSlot = null; setTimeout(() => el.style.opacity = '0.5', 0); };
                 el.ondragend = () => el.style.opacity = '1';
-
-                el.onclick = (e) => {
-                    e.stopPropagation();
-                    selectBrick(brick.id, null, null);
-                };
+                el.onclick = (e) => { e.stopPropagation(); selectBrick(brick.id, null, null); };
 
                 inv.appendChild(el);
             });
@@ -770,9 +781,6 @@
             document.getElementById('submit-btn').innerText = 'Lưu Điểm';
             document.getElementById('submit-btn').disabled = false;
             
-            updateTableUI('lb-table', globalLeaderboardData); 
-            loadOnlineLeaderboard('lb-loading', 'lb-table');
-            
             const winTitle = document.getElementById('win-title');
             if (allFilled) { sfxWin.currentTime = 0; sfxWin.play().catch(()=>{}); winTitle.innerText = "🎉 XUẤT SẮC! 🎉"; winTitle.style.color = "#4CAF50"; } 
             else { winTitle.innerText = "⭐ ĐÃ NỘP BÀI SỚM ⭐"; winTitle.style.color = "#FF9800"; }
@@ -780,7 +788,7 @@
         }
 
         function handleInventoryDrop(e) {
-            e.preventDefault();
+            if(e && e.preventDefault) e.preventDefault();
             if (draggedId !== null && draggedFromSlot !== null) {
                 state[draggedFromSlot.r][draggedFromSlot.c].isFilled = false;
                 state[draggedFromSlot.r][draggedFromSlot.c].content = null;
@@ -790,30 +798,11 @@
             }
         }
 
-        async function loadOnlineLeaderboard(loadingId = '', tableId = '') {
-            if (!GOOGLE_SCRIPT_URL) return; 
-            
-            if (loadingId) document.getElementById(loadingId).style.display = 'block';
-            if (tableId) document.getElementById(tableId).innerHTML = ''; 
-
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL);
-                const data = await response.json();
-                globalLeaderboardData = data; 
-                if (tableId) updateTableUI(tableId, globalLeaderboardData);
-            } catch (error) {
-                console.error("Không thể kết nối với Google Sheets", error);
-            } finally {
-                if (loadingId) document.getElementById(loadingId).style.display = 'none';
-            }
-        }
-
         function updateTableUI(tableId, list) {
             const table = document.getElementById(tableId);
-            
             let html = `
                 <tr>
-                    <th style="width: 15%; text-align: center;">Thứ tự</th>
+                    <th style="width: 15%; text-align: center;">Thứ hạng</th>
                     <th style="width: 45%;">Tên</th>
                     <th style="width: 20%; text-align: center;">Thời gian</th>
                     <th style="width: 20%; text-align: right;">Điểm</th>
@@ -824,48 +813,26 @@
                 html += '<tr><td colspan="4" style="text-align:center; color:#9CA3AF; padding: 15px;">Chưa có cao thủ nào!</td></tr>';
             } else {
                 list.forEach((item, idx) => {
-                    let timeStr = String(item.time || '--:--');
-                    
-                    if (timeStr.includes('p') && timeStr.includes('s')) {
-                        timeStr = timeStr.replace('p ', ':').replace('s', '');
-                    }
-
-                    if (timeStr.includes('T') && timeStr.includes('Z')) {
-                        let d = new Date(timeStr);
-                        if (!isNaN(d)) {
-                            let hr = d.getHours();
-                            let min = d.getMinutes();
-                            if (item.timeSec) {
-                                let m = String(Math.floor(item.timeSec / 60)).padStart(2, '0');
-                                let s = String(item.timeSec % 60).padStart(2, '0');
-                                timeStr = `${m}:${s}`;
-                            } else {
-                                timeStr = `${String(hr).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
-                            }
-                        }
-                    }
-
                     html += `
                         <tr>
                             <td style="text-align: center; color: #0288D1; font-weight: 900;">#${idx + 1}</td>
                             <td><b style="color: #1F2937;">${item.name}</b></td>
-                            <td style="text-align: center; color: #0288D1;">⏱ ${timeStr}</td>
+                            <td style="text-align: center; color: #0288D1;">⏱ ${item.time}</td>
                             <td style="text-align: right; color: #E65100; font-weight: 900;">${item.score} đ</td>
                         </tr>
                     `;
                 });
             }
-            
             table.innerHTML = html;
         }
 
         function showLeaderboard() {
-            updateTableUI('main-lb-table', globalLeaderboardData); 
-            loadOnlineLeaderboard('main-lb-loading', 'main-lb-table'); 
             document.getElementById('leaderboard-screen').classList.remove('hidden');
         }
 
-        function closeLeaderboard() { document.getElementById('leaderboard-screen').classList.add('hidden'); }
+        function closeLeaderboard() { 
+            document.getElementById('leaderboard-screen').classList.add('hidden'); 
+        }
 
         async function saveScore() {
             const name = document.getElementById('player-name').value.trim();
@@ -876,28 +843,40 @@
 
             const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
             const s = String(timeElapsed % 60).padStart(2, '0');
-            const timeString = `${m}p ${s}s`;
+            const timeString = `${m}:${s}`;
 
             try {
-                const url = new URL(GOOGLE_SCRIPT_URL);
-                url.searchParams.append('name', name);
-                url.searchParams.append('score', score);
-                url.searchParams.append('time', timeString);
-                url.searchParams.append('timeSec', timeElapsed);
-
-                const response = await fetch(url);
-                const newData = await response.json();
+                // Đẩy dữ liệu trực tiếp lên Firebase Realtime Database
+                const dbRef = ref(db, 'leaderboard');
+                const newRecordRef = push(dbRef);
+                await set(newRecordRef, {
+                    name: name,
+                    score: score,
+                    time: timeString,
+                    timeSec: timeElapsed
+                });
                 
-                globalLeaderboardData = newData; 
-                updateTableUI('lb-table', globalLeaderboardData); 
-                
-                customAlert("Đã nộp điểm lên hệ thống thành công!", "success");
+                submitBtn.innerText = 'Đã lưu ✔️';
                 document.getElementById('save-area').style.display = 'none';
+                customAlert("Đã nộp điểm lên hệ thống thành công!", "success");
             } catch (e) {
                 customAlert("Lỗi mạng! Không thể gửi điểm lên hệ thống lúc này.", "error");
                 submitBtn.innerText = 'Lưu Điểm'; submitBtn.disabled = false;
             }
         }
+
+        // KẾT NỐI CÁC HÀM VỚI GIAO DIỆN HTML NÊN CẦN GẮN VÀO WINDOW
+        window.toggleMusic = toggleMusic;
+        window.showLeaderboard = showLeaderboard;
+        window.submitGame = submitGame;
+        window.replayGame = replayGame;
+        window.handleInventoryDrop = handleInventoryDrop;
+        window.handleInventoryAreaClick = handleInventoryAreaClick;
+        window.startGame = startGame;
+        window.saveScore = saveScore;
+        window.closeLeaderboard = closeLeaderboard;
+        window.closeAlert = closeAlert;
+        window.closeConfirm = closeConfirm;
     </script>
 </body>
 </html>
