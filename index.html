@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xây Tường Thành - Phong Cách Hoạt Hình</title>
+    <title>Xây Tường Thành </title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/drag-drop-touch"></script>
     <style>
@@ -266,9 +266,10 @@
             border-radius: 20px;
             border: 2px solid #81D4FA;
             box-shadow: 0 3px 0 #4FC3F7;
+            transition: all 0.3s;
         }
 
-        .btn-music, .btn-leaderboard, .submit-btn-top, .btn-reload {
+        .btn-music, .btn-leaderboard, .submit-btn-top {
             color: white; border: none; padding: 8px 15px; border-radius: 15px; font-weight: 900; cursor: pointer; transition: all 0.1s;
         }
         .btn-music { background: #AB47BC; box-shadow: 0 4px 0px #7B1FA2; }
@@ -283,9 +284,6 @@
         .submit-btn-top { background: #43A047; box-shadow: 0 4px 0px #2E7D32; }
         .submit-btn-top:hover { background: #4CAF50; }
         .submit-btn-top:active { transform: translateY(4px); box-shadow: 0 0px 0px #2E7D32; }
-
-        .btn-reload { background: #E0E0E0; color: #616161; box-shadow: 0 4px 0px #BDBDBD; }
-        .btn-reload:active { transform: translateY(4px); box-shadow: 0 0px 0px #BDBDBD; }
 
         sub { font-size: 0.7em; vertical-align: sub; }
         sup { font-size: 0.7em; vertical-align: super; }
@@ -351,7 +349,7 @@
             .inv-brick { width: 135px; height: 95px; }
             .header-title { display: none; } 
             .stats { gap: 8px; font-size: 13px; width: 100%; justify-content: space-between;}
-            .btn-leaderboard, .submit-btn-top, .btn-music, .btn-reload { padding: 8px 10px; font-size: 12px; flex: 1; margin: 0 2px;}
+            .btn-leaderboard, .submit-btn-top, .btn-music { padding: 8px 10px; font-size: 12px; flex: 1; margin: 0 2px;}
             .timer-box { font-size: 12px; padding: 6px 10px; }
             .score { font-size: 12px; padding: 6px 10px; }
         }
@@ -369,11 +367,10 @@
         <div class="header-title">✨ XÂY TƯỜNG THÀNH ✨</div>
         <div class="stats">
             <button id="music-btn" class="btn-music" onclick="toggleMusic()">🎵 Nhạc</button>
-            <div class="timer-box" id="timer-box" style="display: none;">⏱ <span id="timer">00:00</span></div>
+            <div class="timer-box" id="timer-box" style="display: none;">⏱ <span id="timer">10:00</span></div>
             <div class="score">⭐ <span id="score">0</span></div>
             <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 Top 10</button>
-            <button class="submit-btn-top" onclick="submitGame(false)">Nộp bài</button>
-            <button class="btn-reload" onclick="replayGame()">🔄 Tải lại</button>
+            <button id="btn-submit-top" class="submit-btn-top" onclick="submitGame(false)">Nộp bài</button>
         </div>
     </header>
 
@@ -401,7 +398,7 @@
                 <p style="font-size: 14px; color: #0277BD; margin: 0; font-weight: 700;">💡 Dùng điện thoại: <b>Vuốt màn hình để tìm gạch</b>, <b>Chạm gạch</b> (gạch sẽ sáng lên), sau đó <b>chạm ô trống</b> để xây.</p>
             </div>
             <div style="background: #FFEBEE; padding: 12px; border-radius: 15px; margin-bottom: 25px; border: 2px solid #EF9A9A;">
-                <p style="font-size: 14px; color: #C62828; margin: 0; font-weight: 900;">⚠️ Lưu ý: Phải xây từ trên xuống dưới! Sai trừ 5 điểm.</p>
+                <p style="font-size: 14px; color: #C62828; margin: 0; font-weight: 900;">⚠️ Lưu ý: Em có <b>10 PHÚT</b> để hoàn thành. Xây từ trên xuống, sai trừ 5 điểm.</p>
             </div>
             <button onclick="startGame()" style="background:#FF9800; color:white; border:none; padding:18px 30px; font-weight:900; cursor:pointer; border-radius:20px; width:100%; font-size: 18px; box-shadow: 0 6px 0 #E65100; font-family: inherit; transition: all 0.1s;" onmousedown="this.style.transform='translateY(6px)'; this.style.boxShadow='0 0 0 #E65100';" onmouseup="this.style.transform='none'; this.style.boxShadow='0 6px 0 #E65100';">🚀 BẮT ĐẦU NGAY!</button>
         </div>
@@ -411,10 +408,10 @@
         <div class="modal">
             <h2 id="win-title" style="color: #4CAF50; margin: 0 0 10px 0; font-size: 32px; text-shadow: 2px 2px 0 #C8E6C9;">🎉 XUẤT SẮC! 🎉</h2>
             <p style="margin: 0 0 5px 0; font-size: 18px; color: #475569; font-weight: 700;">Bạn đạt được: <b id="final-score" style="color: #E65100; font-size: 28px;">0</b> điểm</p>
-            <p style="margin: 0 0 20px 0; font-size: 16px; color: #475569; font-weight: 700;">Thời gian: <b id="final-time" style="color: #0288D1; font-size: 22px;">00:00</b></p>
+            <p style="margin: 0 0 20px 0; font-size: 16px; color: #475569; font-weight: 700;">Thời gian đã dùng: <b id="final-time" style="color: #0288D1; font-size: 22px;">00:00</b></p>
             
             <div id="save-area" class="input-group">
-                <input type="text" id="player-name" placeholder="✍️ Nhập tên của bạn">
+                <input type="text" id="player-name" placeholder="✍️ Nhập tên của bạn (VD: 10A1 - 01 - An)">
                 <button id="submit-btn" onclick="saveScore()">Lưu Điểm</button>
             </div>
 
@@ -424,7 +421,7 @@
                 <table class="lb-table" id="lb-table"></table>
             </div>
 
-            <button onclick="replayGame()" style="background:#03A9F4; color:white; border:none; padding:15px 25px; cursor:pointer; border-radius:15px; width: 100%; font-size: 16px; font-weight: 900; box-shadow: 0 5px 0 #0288D1; font-family: inherit;" onmousedown="this.style.transform='translateY(5px)'; this.style.boxShadow='0 0 0 #0288D1';" onmouseup="this.style.transform='none'; this.style.boxShadow='0 5px 0 #0288D1';">🔄 CHƠI LẠI TỪ ĐẦU</button>
+            <button id="btn-review" onclick="reviewGame()" style="display:none; background:#03A9F4; color:white; border:none; padding:15px 25px; cursor:pointer; border-radius:15px; width: 100%; font-size: 16px; font-weight: 900; box-shadow: 0 5px 0 #0288D1; font-family: inherit;" onmousedown="this.style.transform='translateY(5px)'; this.style.boxShadow='0 0 0 #0288D1';" onmouseup="this.style.transform='none'; this.style.boxShadow='0 5px 0 #0288D1';">👀 ĐÓNG & XEM LẠI BÀI LÀM</button>
         </div>
     </div>
 
@@ -466,7 +463,19 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
         import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
-        // CẤU HÌNH FIREBASE CỦA CÔ TÂM
+        // --- BỨC TƯỜNG CHỐNG HACKER ---
+        document.addEventListener('contextmenu', e => e.preventDefault()); // Chặn chuột phải
+        document.onkeydown = function(e) {
+            // Chặn F12
+            if (e.keyCode === 123) { e.preventDefault(); return false; } 
+            // Chặn Ctrl+U
+            if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); return false; } 
+            // Chặn Ctrl+Shift+I / J / C
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { e.preventDefault(); return false; } 
+            // Chặn Ctrl+S (Lưu trang)
+            if (e.ctrlKey && e.keyCode === 83) { e.preventDefault(); return false; } 
+        };
+
         const firebaseConfig = {
             apiKey: "AIzaSyCvhFO4AcZrnMeV_f5TtXMcuFQo2YTiUgg",
             authDomain: "xaytuongthanh.firebaseapp.com",
@@ -481,7 +490,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Âm thanh
         const sfxCorrect = new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg');
         const sfxWrong = new Audio('https://actions.google.com/sounds/v1/cartoon/slip_and_fall.ogg');
         const sfxWin = new Audio('https://actions.google.com/sounds/v1/cartoon/ta_da.ogg');
@@ -490,6 +498,9 @@
 
         let isMusicPlaying = true;
         let globalLeaderboardData = []; 
+        let isGameSubmitted = false; 
+
+        const TIME_LIMIT = 600;
 
         function toggleMusic() {
             const btn = document.getElementById('music-btn');
@@ -523,29 +534,14 @@
             pendingConfirmCallback = null;
         }
 
-        const DATA = [
-            { id: 0, circle: null, math: 'log<sub>9</sub>[(2x-1)<sup>2</sup>] = 2' },
-            { id: 1, circle: "5", math: 'log<sub>3</sub>(x<sup>2</sup>+x+3) = 1' },
-            { id: 2, circle: "-4", math: '2<sup>x<sup>2</sup>-6x-5/2</sup> = 16&radic;2' },
-            { id: 3, circle: "0", math: '0,5<sup>2x<sup>2</sup>+x-1</sup> = 1/4' },
-            { id: 4, circle: "-1", math: 'log<sub>3</sub>(x<sup>2</sup>+2x) = 1' },
-            { id: 5, circle: "7", math: 'log<sub>5</sub>(x<sup>2</sup>+1) + log<sub>0,2</sub>(4-5x-x<sup>2</sup>) = 0' },
-            { id: 6, circle: "-3/2", math: '27<sup>x<sup>2</sup>-4x+4</sup> = 9<sup>x<sup>2</sup>-4</sup>' },
-            { id: 7, circle: "1", math: '100<sup>2x<sup>2</sup>-3</sup> = 0,1<sup>2x<sup>2</sup>-18</sup>' },
-            { id: 8, circle: "-3", math: 'log<sub>2</sub>(x<sup>2</sup>) + log<sub>1/2</sub>(2x+8) = 0' },
-            { id: 9, circle: "1/2", math: '2<sup>x<sup>2</sup>-3x-2</sup> = 0,25.16<sup>x-3</sup>' },
-            { id: 10, circle: "10", math: '3<sup>x-1</sup> = 5' },
-            { id: 11, circle: "2", math: 'log(x<sup>2</sup>-2x) = log(2x-3)' },
-            { id: 12, circle: "-2", math: '8<sup>x-2</sup> = 4<sup>1-2x</sup>' },
-            { id: 13, circle: "4", math: '2<sup>2x+3</sup> = 8&radic;2' },
-            { id: 14, circle: "3", math: 'log<sub>4</sub>(x-4) = -2' }
-        ];
+        // ĐÁP ÁN ĐƯỢC MÃ HÓA BASE64 (Học sinh mở code lên cũng không đọc được)
+        const _0xData = "W3siaWQiOjAsImNpcmNsZSI6bnVsbCwibWF0aCI6ImxvZzxzdWI+OTwvc3ViPlsoMngtMSk8c3VwPjI8L3N1cD5dID0gMiJ9LHsiaWQiOjEsImNpcmNsZSI6IjUiLCJtYXRoIjoibG9nPHN1Yj4zPC9zdWI+KHg8c3VwPjI8L3N1cD4reCszKSA9IDEifSx7ImlkIjoyLCJjaXJjbGUiOiItNCIsIm1hdGgiOiIyPHN1cD54PHN1cD4yPC9zdXA+LTZ4LTUvMjwvc3VwPiA9IDE2JnJhZGljOzIifSx7ImlkIjozLCJjaXJjbGUiOiIwIiwibWF0aCI6IjAsNTxzdXA+Mng8c3VwPjI8L3N1cD4reC0xPC9zdXA+ID0gMS80In0seyJpZCI6NCwiY2lyY2xlIjoiLTEiLCJtYXRoIjoibG9nPHN1Yj4zPC9zdWI+KHg8c3VwPjI8L3N1cD4rMngpID0gMSJ9LHsiaWQiOjUsImNpcmNsZSI6IjciLCJtYXRoIjoibG9nPHN1Yj41PC9zdWI+KHg8c3VwPjI8L3N1cD4rMSkgKyBsb2c8c3ViPjAsMjwvc3ViPig0LTV4LXg8c3VwPjI8L3N1cD4pID0gMCJ9LHsiaWQiOjYsImNpcmNsZSI6Ii0zLzIiLCJtYXRoIjoiMjc8c3VwPng8c3VwPjI8L3N1cD4tNHgrNDwvc3VwPiA9IDk8c3VwPng8c3VwPjI8L3N1cD4tNDwvc3VwPiJ9LHsiaWQiOjcsImNpcmNsZSI6IjEiLCJtYXRoIjoiMTAwPHN1cD4yeDxzdXA+Mjwvc3VwPi0zPC9zdXA+ID0gMCwxPHN1cD4yeDxzdXA+Mjwvc3VwPi0xODwvc3VwPiJ9LHsiaWQiOjgsImNpcmNsZSI6Ii0zIiwibWF0aCI6ImxvZzxzdWI+Mjwvc3ViPih4PHN1cD4yPC9zdXA+KSArIGxvZzxzdWI+MS8yPC9zdWI+KDJ4KzgpID0gMCJ9LHsiaWQiOjksImNpcmNsZSI6IjEvMiIsIm1hdGgiOiIyPHN1cD54PHN1cD4yPC9zdXA+LTN4LTI8L3N1cD4gPSAwLDI1LjE2PHN1cD54LTM8L3N1cD4ifSx7ImlkIjoxMCwiY2lyY2xlIjoiMTAiLCJtYXRoIjoiMzxzdXA+eC0xPC9zdXA+ID0gNSJ9LHsiaWQiOjExLCJjaXJjbGUiOiIyIiwibWF0aCI6ImxvZyh4PHN1cD4yPC9zdXA+LTJ4KSA9IGxvZygyeC0zKSJ9LHsiaWQiOjEyLCJjaXJjbGUiOiItMiIsIm1hdGgiOiI4PHN1cD54LTI8L3N1cD4gPSA0PHN1cD4xLTJ4PC9zdXA+In0seyJpZCI6MTMsImNpcmNsZSI6IjQiLCJtYXRoIjoiMjxzdXA+MngrMzwvc3VwPiA9IDgmcmFkaWM7MiJ9LHsiaWQiOjE0LCJjaXJjbGUiOiIzIiwibWF0aCI6ImxvZzxzdWI+NDwvc3ViPih4LTQpID0gLTIifV0=";
+        const DATA = JSON.parse(atob(_0xData));
 
         let score = 0, state = [], invData = [], draggedId = null, draggedFromSlot = null, solutionMap = {}; 
         let startTime, timerInterval, timeElapsed = 0;
         let selectedBrickId = null, selectedFromSlot = null;
 
-        // TẢI DỮ LIỆU TỪ FIREBASE TỰ ĐỘNG (REAL-TIME)
         window.onload = function() { 
             setupGameData(); 
             
@@ -565,7 +561,6 @@
                     }
                 }
 
-                // Sắp xếp: Điểm cao -> Thời gian ngắn
                 list.sort((a, b) => {
                     if (b.score !== a.score) return b.score - a.score;
                     return (a.timeSec || 99999) - (b.timeSec || 99999);
@@ -579,29 +574,55 @@
 
         function startTimer() {
             clearInterval(timerInterval); startTime = Date.now(); timeElapsed = 0;
-            document.getElementById('timer').innerText = "00:00";
+            document.getElementById('timer').innerText = "10:00"; 
+            
             timerInterval = setInterval(() => {
                 timeElapsed = Math.floor((Date.now() - startTime) / 1000);
-                const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
-                const s = String(timeElapsed % 60).padStart(2, '0');
+                let timeLeft = TIME_LIMIT - timeElapsed;
+                
+                if (timeLeft <= 0) {
+                    timeLeft = 0;
+                    document.getElementById('timer').innerText = "00:00";
+                    stopTimer();
+                    
+                    customAlert("⏱ Đã hết 10 phút!<br>Hệ thống sẽ tự động nộp bài của em.", "warning");
+                    
+                    setTimeout(() => {
+                        closeAlert();
+                        submitGame(true); 
+                    }, 2500);
+                    return;
+                }
+
+                const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+                const s = String(timeLeft % 60).padStart(2, '0');
                 document.getElementById('timer').innerText = `${m}:${s}`;
+
+                if (timeLeft <= 60) {
+                    const timerBox = document.getElementById('timer-box');
+                    timerBox.style.backgroundColor = '#FFEBEE';
+                    timerBox.style.color = '#D32F2F';
+                    timerBox.style.borderColor = '#EF5350';
+                }
             }, 1000);
         }
 
         function stopTimer() { clearInterval(timerInterval); }
 
         function startGame() {
+            if (localStorage.getItem('daChoiXayTuongThanh') === 'true') {
+                customAlert("Em đã hoàn thành lượt chơi của mình rồi. Mỗi tài khoản chỉ được tham gia 1 lần nhé!", "warning");
+                return;
+            }
+
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('timer-box').style.display = 'block'; 
             startTimer();
             if (isMusicPlaying) bgMusic.play().catch(e => {});
         }
 
-        function replayGame() {
-            stopTimer();
+        function reviewGame() {
             document.getElementById('win-screen').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
-            setupGameData();
         }
 
         function buildSolutionMap() {
@@ -619,11 +640,22 @@
         }
 
         function setupGameData() {
+            isGameSubmitted = false;
             score = 0; timeElapsed = 0;
             selectedBrickId = null; selectedFromSlot = null;
+            
+            const topBtn = document.getElementById('btn-submit-top');
+            topBtn.innerText = 'Nộp bài';
+            topBtn.onclick = () => submitGame(false);
+
             document.getElementById('score').innerText = score; 
-            document.getElementById('timer').innerText = "00:00";
+            
+            document.getElementById('timer').innerText = "10:00";
             document.getElementById('timer-box').style.display = 'none'; 
+            document.getElementById('timer-box').style.backgroundColor = '#B3E5FC';
+            document.getElementById('timer-box').style.color = '#0277BD';
+            document.getElementById('timer-box').style.borderColor = '#81D4FA';
+
             buildSolutionMap();
             
             const ROWS = [1, 2, 3, 4, 5]; let idx = 0; state = []; invData = [];
@@ -637,13 +669,14 @@
                 }
                 state.push(row);
             });
-            invData.push({ id: 99, circle: "9", math: 'log<sub>2</sub>(x) = 3', placed: false });
-            invData.push({ id: 100, circle: "6", math: 'x + 10 = 16', placed: false });
+            invData.push({ id: 99, circle: atob("OQ=="), math: atob("bG9nPHN1Yj4yPC9zdWI+KHgpID0gMw=="), placed: false });
+            invData.push({ id: 100, circle: atob("Ng=="), math: atob("eCArIDEwID0gMTY="), placed: false });
             invData.sort(() => Math.random() - 0.5);
             render();
         }
 
         function selectBrick(id, r, c) {
+            if (isGameSubmitted) return;
             if (selectedBrickId === id) {
                 selectedBrickId = null; selectedFromSlot = null;
             } else {
@@ -653,6 +686,7 @@
         }
 
         function handleTapDrop(r, c) {
+            if (isGameSubmitted) return;
             if (selectedBrickId !== null) {
                 draggedId = selectedBrickId;
                 draggedFromSlot = selectedFromSlot;
@@ -663,6 +697,7 @@
         }
 
         function handleInventoryAreaClick() {
+            if (isGameSubmitted) return;
             if (selectedBrickId !== null && selectedFromSlot !== null) {
                 let fakeEvent = { preventDefault: ()=>{} };
                 draggedId = selectedBrickId;
@@ -680,12 +715,12 @@
                 row.forEach((slot, c) => {
                     const el = document.createElement('div');
                     if (slot.isFilled) {
-                        el.className = 'brick' + (r === 0 ? ' top-brick' : ' draggable-wall-brick');
+                        el.className = 'brick' + (r === 0 ? ' top-brick' : (isGameSubmitted ? '' : ' draggable-wall-brick'));
                         
                         if (slot.content.id === selectedBrickId) el.classList.add('selected-brick');
                         el.innerHTML = `${slot.content.circle ? `<div class="circle-label">${slot.content.circle}</div>` : ''}<div class="math-content">${slot.content.math}</div>`;
                         
-                        if (r > 0) {
+                        if (r > 0 && !isGameSubmitted) {
                             el.draggable = true;
                             el.ondragstart = (e) => {
                                 if ((r+1 < state.length && state[r+1][c] && state[r+1][c].isFilled) || (r+1 < state.length && state[r+1][c+1] && state[r+1][c+1].isFilled)) {
@@ -706,12 +741,13 @@
                         }
                     } else {
                         el.className = 'brick empty'; el.innerText = 'TRỐNG';
-                        el.ondragover = e => e.preventDefault();
-                        el.ondragenter = () => el.classList.add('drag-over');
-                        el.ondragleave = () => el.classList.remove('drag-over');
-                        el.ondrop = () => handleDrop(r, c);
-                        
-                        el.onclick = (e) => { e.stopPropagation(); handleTapDrop(r, c); };
+                        if (!isGameSubmitted) {
+                            el.ondragover = e => e.preventDefault();
+                            el.ondragenter = () => el.classList.add('drag-over');
+                            el.ondragleave = () => el.classList.remove('drag-over');
+                            el.ondrop = () => handleDrop(r, c);
+                            el.onclick = (e) => { e.stopPropagation(); handleTapDrop(r, c); };
+                        }
                     }
                     rowEl.appendChild(el);
                 });
@@ -720,20 +756,25 @@
 
             const inv = document.getElementById('inventory'); inv.innerHTML = '';
             invData.filter(b => !b.placed).forEach((brick) => {
-                const el = document.createElement('div'); el.className = 'brick inv-brick'; el.draggable = true;
+                const el = document.createElement('div'); 
+                el.className = 'brick' + (isGameSubmitted ? '' : ' inv-brick'); 
                 
                 if (brick.id === selectedBrickId) el.classList.add('selected-brick');
                 el.innerHTML = `<div class="circle-label">${brick.circle}</div><div class="math-content">${brick.math}</div>`;
                 
-                el.ondragstart = () => { draggedId = brick.id; draggedFromSlot = null; setTimeout(() => el.style.opacity = '0.5', 0); };
-                el.ondragend = () => el.style.opacity = '1';
-                el.onclick = (e) => { e.stopPropagation(); selectBrick(brick.id, null, null); };
+                if (!isGameSubmitted) {
+                    el.draggable = true;
+                    el.ondragstart = () => { draggedId = brick.id; draggedFromSlot = null; setTimeout(() => el.style.opacity = '0.5', 0); };
+                    el.ondragend = () => el.style.opacity = '1';
+                    el.onclick = (e) => { e.stopPropagation(); selectBrick(brick.id, null, null); };
+                }
 
                 inv.appendChild(el);
             });
         }
 
         function handleDrop(r, c) {
+            if (isGameSubmitted) return;
             if (r === 0 || (draggedFromSlot && draggedFromSlot.r === r && draggedFromSlot.c === c)) return;
             const slot = state[r][c]; if (slot.isFilled) return;
 
@@ -765,15 +806,24 @@
             const allFilled = state.flat().every(s => s.isFilled);
             if (!allFilled && !isAuto) {
                 customConfirm("Em chưa hoàn thành bức tường!<br>Điểm hiện tại là <b style='color:#E65100;font-size:20px;'>" + score + "</b>.<br><br>Em có chắc chắn muốn nộp bài sớm không?", () => processSubmission(allFilled));
-            } else processSubmission(allFilled);
+            } else processSubmission(allFilled || isAuto);
         }
 
         function processSubmission(allFilled) {
             stopTimer(); bgMusic.pause(); 
+            isGameSubmitted = true; 
             document.getElementById('timer-box').style.display = 'none'; 
+            
+            const topBtn = document.getElementById('btn-submit-top');
+            topBtn.innerText = '📊 Bảng Điểm';
+            topBtn.onclick = () => document.getElementById('win-screen').classList.remove('hidden');
+
+            render(); 
 
             document.getElementById('final-score').innerText = score;
-            const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0'); const s = String(timeElapsed % 60).padStart(2, '0');
+            
+            const m = String(Math.floor(timeElapsed / 60)).padStart(2, '0'); 
+            const s = String(timeElapsed % 60).padStart(2, '0');
             document.getElementById('final-time').innerText = `${m}:${s}`;
             
             document.getElementById('player-name').value = '';
@@ -781,13 +831,27 @@
             document.getElementById('submit-btn').innerText = 'Lưu Điểm';
             document.getElementById('submit-btn').disabled = false;
             
+            // Ẩn nút xem lại bài cho đến khi lưu xong
+            document.getElementById('btn-review').style.display = 'none';
+            
             const winTitle = document.getElementById('win-title');
-            if (allFilled) { sfxWin.currentTime = 0; sfxWin.play().catch(()=>{}); winTitle.innerText = "🎉 XUẤT SẮC! 🎉"; winTitle.style.color = "#4CAF50"; } 
-            else { winTitle.innerText = "⭐ ĐÃ NỘP BÀI SỚM ⭐"; winTitle.style.color = "#FF9800"; }
+            if (allFilled && timeElapsed < TIME_LIMIT) { 
+                sfxWin.currentTime = 0; sfxWin.play().catch(()=>{}); 
+                winTitle.innerText = "🎉 XUẤT SẮC! 🎉"; 
+                winTitle.style.color = "#4CAF50"; 
+            } else if (timeElapsed >= TIME_LIMIT) {
+                winTitle.innerText = "⏱ HẾT GIỜ! ⏱"; 
+                winTitle.style.color = "#D32F2F";
+            } else { 
+                winTitle.innerText = "⭐ ĐÃ NỘP BÀI SỚM ⭐"; 
+                winTitle.style.color = "#FF9800"; 
+            }
+            
             document.getElementById('win-screen').classList.remove('hidden');
         }
 
         function handleInventoryDrop(e) {
+            if (isGameSubmitted) return;
             if(e && e.preventDefault) e.preventDefault();
             if (draggedId !== null && draggedFromSlot !== null) {
                 state[draggedFromSlot.r][draggedFromSlot.c].isFilled = false;
@@ -838,6 +902,12 @@
             const name = document.getElementById('player-name').value.trim();
             if (!name) { customAlert("Vui lòng nhập tên của em nhé!", "warning"); return; }
             
+            const isNameExist = globalLeaderboardData.some(player => player.name.trim().toLowerCase() === name.toLowerCase());
+            if (isNameExist) {
+                customAlert("Tên này đã được dùng để lưu điểm rồi! Nếu là em, em đã hoàn thành bài. Nếu không, vui lòng dùng Mã học sinh + Tên khác.", "error");
+                return;
+            }
+
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.innerText = '⏳ Đang gửi...'; submitBtn.disabled = true;
 
@@ -846,7 +916,6 @@
             const timeString = `${m}:${s}`;
 
             try {
-                // Đẩy dữ liệu trực tiếp lên Firebase Realtime Database
                 const dbRef = ref(db, 'leaderboard');
                 const newRecordRef = push(dbRef);
                 await set(newRecordRef, {
@@ -856,20 +925,25 @@
                     timeSec: timeElapsed
                 });
                 
+                localStorage.setItem('daChoiXayTuongThanh', 'true');
+
                 submitBtn.innerText = 'Đã lưu ✔️';
                 document.getElementById('save-area').style.display = 'none';
-                customAlert("Đã nộp điểm lên hệ thống thành công!", "success");
+                
+                // HIỆN NÚT XEM LẠI BÀI SAU KHI LƯU ĐIỂM XONG
+                document.getElementById('btn-review').style.display = 'block';
+                
+                customAlert("Đã nộp điểm lên hệ thống thành công! Em có thể ấn Xem Lại Bài Làm nhé.", "success");
             } catch (e) {
                 customAlert("Lỗi mạng! Không thể gửi điểm lên hệ thống lúc này.", "error");
                 submitBtn.innerText = 'Lưu Điểm'; submitBtn.disabled = false;
             }
         }
 
-        // KẾT NỐI CÁC HÀM VỚI GIAO DIỆN HTML NÊN CẦN GẮN VÀO WINDOW
         window.toggleMusic = toggleMusic;
         window.showLeaderboard = showLeaderboard;
         window.submitGame = submitGame;
-        window.replayGame = replayGame;
+        window.reviewGame = reviewGame;
         window.handleInventoryDrop = handleInventoryDrop;
         window.handleInventoryAreaClick = handleInventoryAreaClick;
         window.startGame = startGame;
